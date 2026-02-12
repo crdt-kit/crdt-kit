@@ -1,6 +1,7 @@
-use std::collections::BTreeMap;
+use alloc::collections::BTreeMap;
+use alloc::string::String;
 
-use crate::Crdt;
+use crate::{Crdt, DeltaCrdt};
 
 /// A grow-only counter (G-Counter).
 ///
@@ -23,6 +24,7 @@ use crate::Crdt;
 /// assert_eq!(c1.value(), 3);
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GCounter {
     actor: String,
     counts: BTreeMap<String, u64>,
@@ -69,6 +71,35 @@ impl GCounter {
 impl Crdt for GCounter {
     fn merge(&mut self, other: &Self) {
         for (actor, &count) in &other.counts {
+            let entry = self.counts.entry(actor.clone()).or_insert(0);
+            *entry = (*entry).max(count);
+        }
+    }
+}
+
+/// Delta for [`GCounter`]: only the entries where `self` is ahead of `other`.
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GCounterDelta {
+    counts: BTreeMap<String, u64>,
+}
+
+impl DeltaCrdt for GCounter {
+    type Delta = GCounterDelta;
+
+    fn delta(&self, other: &Self) -> GCounterDelta {
+        let mut counts = BTreeMap::new();
+        for (actor, &self_count) in &self.counts {
+            let other_count = other.counts.get(actor).copied().unwrap_or(0);
+            if self_count > other_count {
+                counts.insert(actor.clone(), self_count);
+            }
+        }
+        GCounterDelta { counts }
+    }
+
+    fn apply_delta(&mut self, delta: &GCounterDelta) {
+        for (actor, &count) in &delta.counts {
             let entry = self.counts.entry(actor.clone()).or_insert(0);
             *entry = (*entry).max(count);
         }
@@ -168,5 +199,65 @@ mod tests {
         c.increment();
         assert_eq!(c.count_for("a"), 2);
         assert_eq!(c.count_for("b"), 0);
+    }
+
+    #[test]
+    fn delta_contains_only_new_entries() {
+        let mut c1 = GCounter::new("a");
+        c1.increment();
+        c1.increment();
+
+        let mut c2 = GCounter::new("b");
+        c2.increment();
+
+        let d = c1.delta(&c2);
+        // c1 has a=2, c2 has b=1 — delta should contain a=2
+        assert_eq!(d.counts.get("a"), Some(&2));
+        assert!(!d.counts.contains_key("b"));
+    }
+
+    #[test]
+    fn apply_delta_updates_state() {
+        let mut c1 = GCounter::new("a");
+        c1.increment();
+        c1.increment();
+
+        let mut c2 = GCounter::new("b");
+        c2.increment();
+
+        let d = c1.delta(&c2);
+        c2.apply_delta(&d);
+        assert_eq!(c2.value(), 3);
+    }
+
+    #[test]
+    fn delta_is_empty_when_equal() {
+        let mut c1 = GCounter::new("a");
+        c1.increment();
+
+        let c2 = c1.clone();
+        let d = c1.delta(&c2);
+        assert!(d.counts.is_empty());
+    }
+
+    #[test]
+    fn delta_equivalent_to_full_merge() {
+        let mut c1 = GCounter::new("a");
+        c1.increment();
+        c1.increment();
+
+        let mut c2 = GCounter::new("b");
+        c2.increment();
+
+        // Full merge path
+        let mut full = c2.clone();
+        full.merge(&c1);
+
+        // Delta path
+        let mut via_delta = c2.clone();
+        let d = c1.delta(&c2);
+        via_delta.apply_delta(&d);
+
+        assert_eq!(full.value(), via_delta.value());
     }
 }

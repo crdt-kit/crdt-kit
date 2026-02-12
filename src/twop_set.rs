@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use alloc::collections::BTreeSet;
 
 use crate::Crdt;
 
@@ -28,6 +28,7 @@ use crate::Crdt;
 /// assert!(!s1.contains(&"banana")); // still removed (tombstone wins)
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TwoPSet<T: Ord + Clone> {
     added: BTreeSet<T>,
     removed: BTreeSet<T>,

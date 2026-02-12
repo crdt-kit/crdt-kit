@@ -1,6 +1,7 @@
-use std::collections::{BTreeMap, BTreeSet};
+use alloc::collections::{BTreeMap, BTreeSet};
+use alloc::string::String;
 
-use crate::Crdt;
+use crate::{Crdt, DeltaCrdt};
 
 /// An observed-remove set (OR-Set), also known as an add-wins set.
 ///
@@ -28,6 +29,7 @@ use crate::Crdt;
 /// assert!(s1.contains(&"apple"));
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ORSet<T: Ord + Clone> {
     actor: String,
     counter: u64,
@@ -139,6 +141,72 @@ impl<T: Ord + Clone> Crdt for ORSet<T> {
 
         // Update counter to be at least as high as the other
         self.counter = self.counter.max(other.counter);
+    }
+}
+
+/// Delta for [`ORSet`]: new element tags and new tombstones since another state.
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct ORSetDelta<T: Ord + Clone> {
+    /// New element-tag pairs that the other replica doesn't have.
+    additions: BTreeMap<T, BTreeSet<(String, u64)>>,
+    /// New tombstones that the other replica doesn't have.
+    tombstones: BTreeSet<(String, u64)>,
+}
+
+impl<T: Ord + Clone> DeltaCrdt for ORSet<T> {
+    type Delta = ORSetDelta<T>;
+
+    fn delta(&self, other: &Self) -> ORSetDelta<T> {
+        let mut additions = BTreeMap::new();
+        for (value, self_tags) in &self.elements {
+            let other_tags = other.elements.get(value);
+            let new_tags: BTreeSet<_> = self_tags
+                .iter()
+                .filter(|tag| {
+                    other_tags.map_or(true, |ot| !ot.contains(*tag))
+                        && !other.tombstones.contains(*tag)
+                })
+                .cloned()
+                .collect();
+            if !new_tags.is_empty() {
+                additions.insert(value.clone(), new_tags);
+            }
+        }
+
+        let tombstones: BTreeSet<_> = self
+            .tombstones
+            .difference(&other.tombstones)
+            .cloned()
+            .collect();
+
+        ORSetDelta {
+            additions,
+            tombstones,
+        }
+    }
+
+    fn apply_delta(&mut self, delta: &ORSetDelta<T>) {
+        // Apply additions
+        for (value, tags) in &delta.additions {
+            let self_tags = self.elements.entry(value.clone()).or_default();
+            for tag in tags {
+                if !self.tombstones.contains(tag) {
+                    self_tags.insert(tag.clone());
+                }
+            }
+        }
+
+        // Apply tombstones
+        for tag in &delta.tombstones {
+            for tags in self.elements.values_mut() {
+                tags.remove(tag);
+            }
+        }
+        self.tombstones.extend(delta.tombstones.iter().cloned());
+
+        // Clean up empty tag sets
+        self.elements.retain(|_, tags| !tags.is_empty());
     }
 }
 
@@ -266,5 +334,55 @@ mod tests {
 
         let elems: Vec<&i32> = s.iter().collect();
         assert_eq!(elems, vec![&1, &3]);
+    }
+
+    #[test]
+    fn delta_apply_equivalent_to_merge() {
+        let mut s1 = ORSet::new("a");
+        s1.insert("x");
+        s1.insert("y");
+        s1.remove(&"x");
+
+        let mut s2 = ORSet::new("b");
+        s2.insert("y");
+        s2.insert("z");
+
+        let mut full = s2.clone();
+        full.merge(&s1);
+
+        let mut via_delta = s2.clone();
+        let d = s1.delta(&s2);
+        via_delta.apply_delta(&d);
+
+        let full_elems: BTreeSet<_> = full.iter().collect();
+        let delta_elems: BTreeSet<_> = via_delta.iter().collect();
+        assert_eq!(full_elems, delta_elems);
+    }
+
+    #[test]
+    fn delta_is_empty_when_equal() {
+        let mut s1 = ORSet::new("a");
+        s1.insert("x");
+
+        let s2 = s1.clone();
+        let d = s1.delta(&s2);
+        assert!(d.additions.is_empty());
+        assert!(d.tombstones.is_empty());
+    }
+
+    #[test]
+    fn delta_carries_tombstones() {
+        let mut s1 = ORSet::new("a");
+        s1.insert("x");
+
+        let s2 = s1.clone();
+        s1.remove(&"x");
+
+        let d = s1.delta(&s2);
+        assert!(!d.tombstones.is_empty());
+
+        let mut via_delta = s2.clone();
+        via_delta.apply_delta(&d);
+        assert!(!via_delta.contains(&"x"));
     }
 }

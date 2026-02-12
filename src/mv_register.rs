@@ -1,4 +1,6 @@
-use std::collections::BTreeMap;
+use alloc::collections::BTreeMap;
+use alloc::string::String;
+use alloc::vec::Vec;
 
 use crate::Crdt;
 
@@ -27,6 +29,7 @@ use crate::Crdt;
 /// assert!(values.contains(&&"bob"));
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MVRegister<T: Clone + Ord> {
     actor: String,
     /// Version vector: actor -> counter
@@ -100,8 +103,7 @@ impl<T: Clone + Ord> Crdt for MVRegister<T> {
         // - not dominated by other's version (concurrent or newer), OR
         // - also present in other's entries (both sides still hold it)
         for entry in &self.entries {
-            if !dominates(&other.version, &entry.1)
-                || other.entries.iter().any(|e| e.1 == entry.1)
+            if !dominates(&other.version, &entry.1) || other.entries.iter().any(|e| e.1 == entry.1)
             {
                 new_entries.push(entry.clone());
             }
@@ -110,9 +112,7 @@ impl<T: Clone + Ord> Crdt for MVRegister<T> {
         // Keep entries from other that are not dominated by self's original
         // version, and avoid duplicates already added from self.
         for entry in &other.entries {
-            if !dominates(&self_version, &entry.1)
-                && !new_entries.iter().any(|e| e.1 == entry.1)
-            {
+            if !dominates(&self_version, &entry.1) && !new_entries.iter().any(|e| e.1 == entry.1) {
                 new_entries.push(entry.clone());
             }
         }

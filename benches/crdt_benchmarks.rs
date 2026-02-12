@@ -1,5 +1,5 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use crdt_kit::prelude::*;
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 fn bench_gcounter_increment(c: &mut Criterion) {
     c.bench_function("GCounter::increment x1000", |b| {

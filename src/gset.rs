@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use alloc::collections::BTreeSet;
 
 use crate::Crdt;
 
@@ -24,6 +24,7 @@ use crate::Crdt;
 /// assert!(s1.contains(&"cherry"));
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct GSet<T: Ord + Clone> {
     elements: BTreeSet<T>,
 }
@@ -84,7 +85,7 @@ impl<T: Ord + Clone> Crdt for GSet<T> {
 
 impl<T: Ord + Clone> IntoIterator for GSet<T> {
     type Item = T;
-    type IntoIter = std::collections::btree_set::IntoIter<T>;
+    type IntoIter = alloc::collections::btree_set::IntoIter<T>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.elements.into_iter()

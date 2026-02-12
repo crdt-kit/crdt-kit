@@ -1,4 +1,4 @@
-use std::time::{SystemTime, UNIX_EPOCH};
+use alloc::string::String;
 
 use crate::Crdt;
 
@@ -20,6 +20,7 @@ use crate::Crdt;
 /// // Value is either "hello" or "world" depending on timestamps
 /// ```
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct LWWRegister<T: Clone> {
     actor: String,
     value: T,
@@ -38,6 +39,10 @@ impl<T: Clone> LWWRegister<T> {
     /// Create a new LWW-Register with an initial value.
     ///
     /// The timestamp is automatically set to the current system time.
+    ///
+    /// This method requires the `std` feature. In `no_std` environments, use
+    /// [`LWWRegister::with_timestamp`] instead.
+    #[cfg(feature = "std")]
     pub fn new(actor: impl Into<String>, value: T) -> Self {
         Self {
             actor: actor.into(),
@@ -49,6 +54,7 @@ impl<T: Clone> LWWRegister<T> {
     /// Create a new LWW-Register with an explicit timestamp.
     ///
     /// Useful for testing or when you need deterministic behavior.
+    /// This is the only constructor available in `no_std` environments.
     pub fn with_timestamp(actor: impl Into<String>, value: T, timestamp: u64) -> Self {
         Self {
             actor: actor.into(),
@@ -60,6 +66,10 @@ impl<T: Clone> LWWRegister<T> {
     /// Update the register's value.
     ///
     /// The timestamp is automatically set to the current system time.
+    ///
+    /// This method requires the `std` feature. In `no_std` environments, use
+    /// [`LWWRegister::set_with_timestamp`] instead.
+    #[cfg(feature = "std")]
     pub fn set(&mut self, value: T) {
         self.value = value;
         self.timestamp = now();
@@ -103,9 +113,10 @@ impl<T: Clone> Crdt for LWWRegister<T> {
     }
 }
 
+#[cfg(feature = "std")]
 fn now() -> u64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
         .unwrap_or_default()
         .as_micros() as u64
 }

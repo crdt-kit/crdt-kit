@@ -94,10 +94,7 @@ fn twopset_remove_wins_over_concurrent_add() {
 
     a.merge(&b);
     // In 2P-Set, once removed, always removed
-    assert!(
-        !a.contains(&"x"),
-        "2P-Set: remove should be permanent"
-    );
+    assert!(!a.contains(&"x"), "2P-Set: remove should be permanent");
 }
 
 #[test]
@@ -111,7 +108,11 @@ fn mvregister_preserves_concurrent_writes() {
     a.merge(&b);
 
     let values = a.values();
-    assert_eq!(values.len(), 2, "Both concurrent values should be preserved");
+    assert_eq!(
+        values.len(),
+        2,
+        "Both concurrent values should be preserved"
+    );
     assert!(values.contains(&&1));
     assert!(values.contains(&&2));
 }

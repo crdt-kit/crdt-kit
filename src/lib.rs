@@ -7,6 +7,19 @@
 //! are merged, they are guaranteed to converge to the same state without
 //! requiring coordination or consensus.
 //!
+//! ## `no_std` Support
+//!
+//! This crate supports `no_std` environments with the `alloc` crate.
+//! Disable the default `std` feature in your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! crdt-kit = { version = "0.2", default-features = false }
+//! ```
+//!
+//! Note: [`LWWRegister::new`] and [`LWWRegister::set`] require the `std`
+//! feature for automatic timestamps via `SystemTime`.
+//!
 //! ## Quick Start
 //!
 //! ```
@@ -43,6 +56,10 @@
 //! All types implement the [`Crdt`] trait, which provides the [`Crdt::merge`]
 //! method. Merge is guaranteed to be commutative, associative, and idempotent.
 
+#![cfg_attr(not(feature = "std"), no_std)]
+
+extern crate alloc;
+
 mod crdt;
 mod gcounter;
 mod gset;
@@ -50,15 +67,21 @@ mod lww_register;
 mod mv_register;
 mod or_set;
 mod pncounter;
+mod rga;
+mod text;
 mod twop_set;
+#[cfg(feature = "wasm")]
+mod wasm;
 
 pub mod prelude;
 
-pub use crdt::Crdt;
-pub use gcounter::GCounter;
+pub use crdt::{Crdt, DeltaCrdt};
+pub use gcounter::{GCounter, GCounterDelta};
 pub use gset::GSet;
 pub use lww_register::LWWRegister;
 pub use mv_register::MVRegister;
-pub use or_set::ORSet;
-pub use pncounter::PNCounter;
+pub use or_set::{ORSet, ORSetDelta};
+pub use pncounter::{PNCounter, PNCounterDelta};
+pub use rga::Rga;
+pub use text::TextCrdt;
 pub use twop_set::TwoPSet;

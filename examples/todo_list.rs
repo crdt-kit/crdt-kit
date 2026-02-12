@@ -46,6 +46,9 @@ fn main() {
     // Sync again - add wins!
     alice.merge(&bob);
     println!("\nAfter sync (add wins):");
-    println!("'Buy groceries' present: {}", alice.contains(&"Buy groceries"));
+    println!(
+        "'Buy groceries' present: {}",
+        alice.contains(&"Buy groceries")
+    );
     println!("Total items: {}", alice.len());
 }
