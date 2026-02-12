@@ -99,6 +99,55 @@ assert_eq!(phone.value(), 3);
 
 ---
 
+## Edge Computing & IoT
+
+`crdt-kit` is purpose-built for edge environments. Import it with `no_std` for bare metal or with `serde` for network serialization:
+
+```toml
+# Raspberry Pi / ESP32 / bare metal (no standard library)
+[dependencies]
+crdt-kit = { version = "0.2", default-features = false }
+
+# Edge node with JSON sync over MQTT/HTTP
+[dependencies]
+crdt-kit = { version = "0.2", features = ["serde"] }
+serde_json = "1"
+```
+
+```rust
+use crdt_kit::prelude::*;
+
+// Edge sensor node collects temperature readings
+let mut sensor_a = GCounter::new("sensor-a");
+let mut sensor_b = GCounter::new("sensor-b");
+
+// Each sensor counts events independently (no network needed)
+sensor_a.increment_by(142); // 142 events detected
+sensor_b.increment_by(89);  // 89 events detected
+
+// When the gateway collects data — merge. Order doesn't matter.
+sensor_a.merge(&sensor_b);
+assert_eq!(sensor_a.value(), 231); // exact total, no double-counting
+
+// Delta sync: only send what changed (saves bandwidth on LoRa/BLE)
+let mut gateway = GCounter::new("gateway");
+let delta = sensor_a.delta(&gateway);  // minimal payload
+gateway.apply_delta(&delta);            // gateway is up to date
+assert_eq!(gateway.value(), 231);
+```
+
+**Why this matters for edge:**
+
+| Challenge | How crdt-kit solves it |
+|---|---|
+| Intermittent connectivity | Devices work offline, merge when connected |
+| Limited bandwidth (LoRa, BLE) | Delta sync sends only changes, not full state |
+| No central server | Peer-to-peer merge — any device can sync with any other |
+| Memory constraints | `no_std` + `alloc` — no heap fragmentation from `std` |
+| Unreliable message delivery | Idempotent merge — safe to retry, no duplicates |
+
+---
+
 ## Available CRDTs
 
 ### Counters
