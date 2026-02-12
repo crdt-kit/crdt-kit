@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(C:/Users/alelopez/.cargo/bin/cargo.exe test:*)",
+      "Bash(C:/Users/alelopez/.cargo/bin/cargo.exe clippy:*)",
+      "Bash(C:/Users/alelopez/.cargo/bin/cargo.exe run:*)"
+    ]
+  }
+}

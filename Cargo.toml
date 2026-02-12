@@ -1,0 +1,31 @@
+[package]
+name = "crdt-kit"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+authors = ["abdielLopezpy"]
+license = "MIT OR Apache-2.0"
+description = "CRDTs optimized for edge computing and local-first applications"
+repository = "https://github.com/abdielLopezpy/crdt-kit"
+homepage = "https://github.com/abdielLopezpy/crdt-kit"
+documentation = "https://docs.rs/crdt-kit"
+readme = "README.md"
+keywords = ["crdt", "edge-computing", "local-first", "offline", "distributed"]
+categories = ["data-structures", "algorithms", "network-programming"]
+exclude = ["benches/", ".github/", "*.png"]
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
+serde = { version = "1", features = ["derive"], optional = true }
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+rand = "0.8"
+serde_json = "1"
+
+[[bench]]
+name = "crdt_benchmarks"
+harness = false
