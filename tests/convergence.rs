@@ -190,3 +190,29 @@ fn repeated_merge_is_idempotent() {
     a.merge(&b);
     assert_eq!(a, snapshot, "Merge should be idempotent (3rd time)");
 }
+
+// Compile-time assertions: all CRDT types must be Send + Sync.
+fn _assert_send<T: Send>() {}
+fn _assert_sync<T: Sync>() {}
+
+#[test]
+fn all_types_are_send_and_sync() {
+    _assert_send::<GCounter>();
+    _assert_sync::<GCounter>();
+    _assert_send::<PNCounter>();
+    _assert_sync::<PNCounter>();
+    _assert_send::<LWWRegister<String>>();
+    _assert_sync::<LWWRegister<String>>();
+    _assert_send::<MVRegister<String>>();
+    _assert_sync::<MVRegister<String>>();
+    _assert_send::<GSet<String>>();
+    _assert_sync::<GSet<String>>();
+    _assert_send::<TwoPSet<String>>();
+    _assert_sync::<TwoPSet<String>>();
+    _assert_send::<ORSet<String>>();
+    _assert_sync::<ORSet<String>>();
+    _assert_send::<Rga<String>>();
+    _assert_sync::<Rga<String>>();
+    _assert_send::<TextCrdt>();
+    _assert_sync::<TextCrdt>();
+}

@@ -113,6 +113,21 @@ impl<T: Ord + Clone> ORSet<T> {
     }
 }
 
+impl<T: Ord + Clone> IntoIterator for ORSet<T> {
+    type Item = T;
+    type IntoIter = alloc::vec::IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        let items: alloc::vec::Vec<T> = self
+            .elements
+            .into_iter()
+            .filter(|(_, tags)| !tags.is_empty())
+            .map(|(v, _)| v)
+            .collect();
+        items.into_iter()
+    }
+}
+
 impl<T: Ord + Clone> Crdt for ORSet<T> {
     fn merge(&mut self, other: &Self) {
         // Merge all elements and their tags

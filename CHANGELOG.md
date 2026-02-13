@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-02-13
+
+### Added
+
+- `IntoIterator` for `TwoPSet<T>` and `ORSet<T>` (Rust API Guidelines compliance)
+- `#![warn(missing_docs)]` lint to enforce documentation on all public items
+- Compile-time `Send + Sync` assertions for all CRDT types
+- 133 tests total (111 unit + 10 integration + 12 doctests)
+
 ## [0.2.0] - 2026-02-12
 
 ### Added
@@ -44,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive test suite
 - Benchmark suite comparing operations
 
-[Unreleased]: https://github.com/abdielLopezpy/crdt-kit/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/abdielLopezpy/crdt-kit/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/abdielLopezpy/crdt-kit/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/abdielLopezpy/crdt-kit/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/abdielLopezpy/crdt-kit/releases/tag/v0.1.0

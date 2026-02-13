@@ -99,6 +99,16 @@ impl<T: Ord + Clone> Default for TwoPSet<T> {
     }
 }
 
+impl<T: Ord + Clone> IntoIterator for TwoPSet<T> {
+    type Item = T;
+    type IntoIter = alloc::vec::IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        let active: alloc::vec::Vec<T> = self.added.difference(&self.removed).cloned().collect();
+        active.into_iter()
+    }
+}
+
 impl<T: Ord + Clone> Crdt for TwoPSet<T> {
     fn merge(&mut self, other: &Self) {
         for elem in &other.added {
