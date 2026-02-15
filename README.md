@@ -2,18 +2,14 @@
 
 <br>
 
-# `crdt-kit`
+<img src="assets/banner.png" alt="crdt-kit — Conflict-Free Data Types for Rust" width="700">
 
-### Conflict-free Replicated Data Types for Rust
-
-**Build offline-first, real-time, and distributed applications that just work.**
-
-<br>
+<br><br>
 
 [![Crates.io](https://img.shields.io/crates/v/crdt-kit.svg?style=for-the-badge&logo=rust&logoColor=white&color=e6522c)](https://crates.io/crates/crdt-kit)
 [![Downloads](https://img.shields.io/crates/d/crdt-kit.svg?style=for-the-badge&logo=rust&logoColor=white&color=e6522c)](https://crates.io/crates/crdt-kit)
 [![Docs.rs](https://img.shields.io/docsrs/crdt-kit?style=for-the-badge&logo=docs.rs&logoColor=white&color=1a6fe6)](https://docs.rs/crdt-kit)
-[![CI](https://img.shields.io/github/actions/workflow/status/abdielLopezpy/crdt-kit/ci.yml?branch=master&style=for-the-badge&logo=github&logoColor=white&label=CI)](https://github.com/abdielLopezpy/crdt-kit/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/crdt-kit/crdt-kit/ci.yml?branch=master&style=for-the-badge&logo=github&logoColor=white&label=CI)](https://github.com/crdt-kit/crdt-kit/actions)
 [![License](https://img.shields.io/crates/l/crdt-kit.svg?style=for-the-badge&color=blue)](LICENSE-MIT)
 
 <br>
