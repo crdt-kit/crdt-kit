@@ -21,12 +21,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@nightly
 
       - uses: Swatinem/rust-cache@v2
 
       - name: Build rustdoc (workspace)
-        run: cargo doc --workspace --all-features --no-deps
+        run: cargo +nightly doc --workspace --all-features --no-deps
         env:
           RUSTDOCFLAGS: "--enable-index-page -Zunstable-options"
 
