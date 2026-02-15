@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-14
+
+### Added
+
+- **crdt-codegen** (v0.2.0) — Complete persistence layer generation from TOML schemas
+  - `repositories/` — Repository traits (ports) and `CrdtDb`-backed implementations (adapters) for hexagonal architecture
+  - `store.rs` — Unified `Persistence<S>` entry point with scoped, borrow-checked repository access
+  - `events/` — Event sourcing types (`{Entity}Event`, `{Entity}Snapshot`, `{Entity}FieldUpdate`), configurable snapshot policies
+  - `sync/` — Delta sync (`compute_*_delta`, `apply_*_delta`) for `DeltaCrdt`-capable fields + state-based `merge_*` for all CRDT fields
+  - Nested directory structure: `models/`, `migrations/`, `repositories/`, `events/`, `sync/`
+  - Conditional generation: `events` and `sync` modules only when enabled in schema config
+- **crdt-codegen** Schema config extensions — `[config.events]` (enabled, snapshot_threshold) and `[config.sync]` (enabled)
+- **crdt-codegen** CRDT type annotations — Schema fields support `crdt = "LWWRegister"` etc., generating wrapped types (`LWWRegister<String>`) and auto-migration defaults
+- **crdt-codegen** Entity relations — Schema fields support `relation = "Project"`, generating typed `find_by_*` methods
+- **crdt-codegen** Delta type mapping — GCounter, PNCounter, ORSet mapped to delta types; LWWRegister, MVRegister, GSet, TwoPSet use state-based merge only
+- **crdt-cli** (v0.3.0) `generate` subcommand — Generate code from schema files via `crdt generate --schema crdt-schema.toml` with `--dry-run` support and nested directory creation
+- **crdt-cli** `dev-ui` subcommand — Launch an embedded Axum web panel for visual database inspection
+- **crdt-store** (v0.2.0) `RedbStore` backend — Pure-Rust embedded key-value store (no C deps), implementing `StateStore`, `EventStore`, and `BatchOps`
+- **crdt-store** 3 platform examples: `iot_sensor` (schema migration on OTA), `collaborative` (multi-node CRDT merge), `event_sourcing` (event log + snapshot + compaction)
+- **crdt-migrate** (v0.2.0) — Versioned envelope serialization with transparent schema migrations and proc macros
+- **crdt-dev-ui** (v0.2.0) — Embedded web panel for database inspection during development
+- **crdt-example-tasks** — Complete example demonstrating all features: repository pattern, v1→v2 migration, CRDT fields, entity relations, delta sync, and event sourcing
+- Schema validation — `snapshot_threshold > 0`, `sync.enabled` requires CRDT fields, contiguous versions, type checking
+- CI feature-matrix job testing `no_std`, `serde`, `sqlite`, `redb`, and `no-macros` feature combinations
+- 268 tests across the workspace
+
 ## [0.2.1] - 2026-02-13
 
 ### Added
@@ -53,7 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive test suite
 - Benchmark suite comparing operations
 
-[Unreleased]: https://github.com/abdielLopezpy/crdt-kit/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/abdielLopezpy/crdt-kit/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/abdielLopezpy/crdt-kit/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/abdielLopezpy/crdt-kit/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/abdielLopezpy/crdt-kit/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/abdielLopezpy/crdt-kit/releases/tag/v0.1.0

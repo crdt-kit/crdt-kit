@@ -1,0 +1,21 @@
+[package]
+name = "crdt-migrate-macros"
+version = "0.2.0"
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Proc macros for crdt-migrate: #[crdt_schema] and #[migration]"
+readme = "../../README.md"
+keywords = ["crdt", "migration", "macro", "schema", "derive"]
+categories = ["database", "rust-patterns"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "2", features = ["full", "extra-traits"] }
+quote = "1"
+proc-macro2 = "1"

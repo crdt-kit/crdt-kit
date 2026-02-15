@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>crdt-kit Dev UI</title>
+<style>
+:root {
+  --bg-0: #0d1117;
+  --bg-1: #161b22;
+  --bg-2: #21262d;
+  --bg-3: #30363d;
+  --border: #30363d;
+  --text-0: #e6edf3;
+  --text-1: #c9d1d9;
+  --text-2: #8b949e;
+  --accent: #58a6ff;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text-1);
+  background: var(--bg-0);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Top bar ─────────────────────────────────── */
+.topbar {
+  height: 48px;
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  flex-shrink: 0;
+  gap: 12px;
+}
+.topbar-logo {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-0);
+  letter-spacing: -0.3px;
+}
+.topbar-logo span { color: var(--accent); }
+.topbar-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+}
+.topbar-db {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-2);
+}
+.topbar-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.topbar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.topbar-refresh {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-2);
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+.topbar-refresh:hover { color: var(--text-0); border-color: var(--text-2); }
+
+/* ── Layout ──────────────────────────────────── */
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Sidebar ─────────────────────────────────── */
+.sidebar {
+  width: 220px;
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding: 12px 0;
+}
+.sidebar-section {
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+.sidebar-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-2);
+  padding: 4px 0;
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  color: var(--text-1);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.sidebar-link:hover { background: var(--bg-2); color: var(--text-0); }
+.sidebar-link.active { background: var(--bg-2); color: var(--accent); }
+.sidebar-link .count {
+  margin-left: auto;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--text-2);
+}
+
+/* ── Main ────────────────────────────────────── */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* ── Breadcrumb ──────────────────────────────── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 20px;
+}
+.breadcrumb a {
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb .sep { color: var(--bg-3); }
+
+/* ── Cards ───────────────────────────────────── */
+.card {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.card-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-0);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-body { padding: 16px; }
+
+/* ── Stat boxes ──────────────────────────────── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.stat-box {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-0);
+  font-family: var(--mono);
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-top: 4px;
+}
+
+/* ── Tables ──────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th {
+  text-align: left;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+}
+th.r { text-align: right; }
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--bg-2);
+  color: var(--text-1);
+}
+td.r { text-align: right; font-family: var(--mono); font-size: 12px; }
+td.mono { font-family: var(--mono); font-size: 12px; }
+tr:hover td { background: var(--bg-2); }
+tr.clickable { cursor: pointer; }
+
+/* ── Badges ──────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--mono);
+}
+.badge-blue { background: rgba(88,166,255,0.15); color: var(--accent); }
+.badge-green { background: rgba(63,185,80,0.15); color: var(--green); }
+.badge-purple { background: rgba(188,140,255,0.15); color: var(--purple); }
+
+/* ── Detail grid ─────────────────────────────── */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px 16px;
+  font-size: 13px;
+}
+.detail-label { color: var(--text-2); }
+.detail-value { color: var(--text-0); font-family: var(--mono); font-size: 12px; }
+
+/* ── Empty state ─────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-2);
+}
+.empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.4; }
+.empty-text { font-size: 14px; }
+
+/* ── Loading ─────────────────────────────────── */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: var(--text-2);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--bg-3);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 10px;
+}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-logo">crdt-kit <span>Dev UI</span></div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-db" id="db-path">-</div>
+  <div class="topbar-status">
+    <div class="topbar-dot"></div>
+    Connected
+  </div>
+  <button class="topbar-refresh" onclick="refresh()">Refresh</button>
+</div>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a class="sidebar-link active" data-route="" onclick="go('')">
+        Overview
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Namespaces</div>
+      <div id="ns-list"></div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="main" id="content">
+    <div class="loading"><div class="spinner"></div> Loading...</div>
+  </main>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────
+let statusData = null;
+
+// ── API ──────────────────────────────────────────────────────────────
+async function api(path) {
+  const res = await fetch(path);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+// ── Router ───────────────────────────────────────────────────────────
+function go(hash) {
+  location.hash = hash;
+}
+
+function route() {
+  const h = location.hash.slice(1) || '';
+  // Update active sidebar link
+  document.querySelectorAll('.sidebar-link').forEach(el => {
+    el.classList.toggle('active', el.dataset.route === h);
+  });
+
+  if (h === '') return showOverview();
+  const nsMatch = h.match(/^\/ns\/([^/]+)$/);
+  if (nsMatch) return showNamespace(decodeURIComponent(nsMatch[1]));
+  const entityMatch = h.match(/^\/ns\/([^/]+)\/(.+?)(?:\/events)?$/);
+  if (entityMatch) {
+    const ns = decodeURIComponent(entityMatch[1]);
+    const key = decodeURIComponent(entityMatch[2]);
+    if (h.endsWith('/events')) return showEvents(ns, key);
+    return showEntity(ns, key);
+  }
+  showOverview();
+}
+
+window.addEventListener('hashchange', route);
+
+// ── Formatters ───────────────────────────────────────────────────────
+function fmtNum(n) {
+  if (n == null) return '-';
+  return n.toLocaleString();
+}
+
+function fmtBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+  return (b / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function escHtml(s) {
+  const el = document.createElement('span');
+  el.textContent = s;
+  return el.innerHTML;
+}
+
+// ── Views ────────────────────────────────────────────────────────────
+
+async function showOverview() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
+  try {
+    const data = await api('/api/status');
+    statusData = data;
+    document.getElementById('db-path').textContent = data.database;
+    renderSidebar(data.namespaces);
+
+    let html = '';
+
+    // Stats
+    html += '<div class="stats">';
+    html += statBox(fmtNum(data.total_entities), 'Entities');
+    html += statBox(fmtNum(data.total_events), 'Events');
+    html += statBox(fmtNum(data.total_snapshots), 'Snapshots');
+    html += statBox(data.size_human, 'Database Size');
+    html += '</div>';
+
+    // Namespace table
+    html += '<div class="card"><div class="card-header">Namespaces</div>';
+    if (data.namespaces.length === 0) {
+      html += '<div class="empty"><div class="empty-icon">&#x1f4e6;</div><div class="empty-text">Empty database</div></div>';
+    } else {
+      html += '<table><thead><tr>';
+      html += '<th>Name</th><th class="r">Entities</th><th class="r">Events</th><th class="r">Snapshots</th>';
+      html += '</tr></thead><tbody>';
+      for (const ns of data.namespaces) {
+        html += `<tr class="clickable" onclick="go('/ns/${encodeURIComponent(ns.name)}')">`;
+        html += `<td><strong>${escHtml(ns.name)}</strong></td>`;
+        html += `<td class="r">${fmtNum(ns.entity_count)}</td>`;
+        html += `<td class="r">${fmtNum(ns.event_count)}</td>`;
+        html += `<td class="r">${fmtNum(ns.snapshot_count)}</td>`;
+        html += '</tr>';
+      }
+      html += '</tbody></table>';
+    }
+    html += '</div>';
+
+    // Info card
+    html += '<div class="card"><div class="card-header">Database Info</div><div class="card-body">';
+    html += '<div class="detail-grid">';
+    html += detailRow('Path', data.database);
+    html += detailRow('Size', data.size_human + ' (' + fmtNum(data.size_bytes) + ' bytes)');
+    html += detailRow('Journal Mode', data.journal_mode.toUpperCase());
+    html += '</div></div></div>';
+
+    content.innerHTML = html;
+  } catch (e) {
+    content.innerHTML = `<div class="empty"><div class="empty-text">Error: ${escHtml(e.message)}</div></div>`;
+  }
+}
+
+async function showNamespace(ns) {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
+  try {
+    const entities = await api(`/api/namespaces/${encodeURIComponent(ns)}/entities`);
+    let html = breadcrumb([{label: 'Overview', hash: ''}, {label: ns}]);
+
+    html += `<h2 style="color:var(--text-0);margin-bottom:16px;font-size:18px">${escHtml(ns)}</h2>`;
+
+    html += '<div class="card">';
+    html += `<div class="card-header">Entities (${entities.length})</div>`;
+    if (entities.length === 0) {
+      html += '<div class="empty"><div class="empty-text">No entities in this namespace</div></div>';
+    } else {
+      html += '<table><thead><tr>';
+      html += '<th>Key</th><th class="r">Size</th><th>Version</th><th>CRDT Type</th>';
+      html += '</tr></thead><tbody>';
+      for (const e of entities) {
+        const route = `/ns/${encodeURIComponent(ns)}/${encodeURIComponent(e.key)}`;
+        html += `<tr class="clickable" onclick="go('${route}')">`;
+        html += `<td class="mono">${escHtml(e.key)}</td>`;
+        html += `<td class="r">${fmtBytes(e.size)}</td>`;
+        html += `<td>${e.version != null ? '<span class="badge badge-blue">v' + e.version + '</span>' : '<span style="color:var(--text-2)">-</span>'}</td>`;
+        html += `<td>${e.crdt_type ? '<span class="badge badge-purple">' + escHtml(e.crdt_type) + '</span>' : '<span style="color:var(--text-2)">raw</span>'}</td>`;
+        html += '</tr>';
+      }
+      html += '</tbody></table>';
+    }
+    html += '</div>';
+
+    content.innerHTML = html;
+  } catch (e) {
+    content.innerHTML = `<div class="empty"><div class="empty-text">Error: ${escHtml(e.message)}</div></div>`;
+  }
+}
+
+async function showEntity(ns, key) {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
+  try {
+    const [entity, events] = await Promise.all([
+      api(`/api/namespaces/${encodeURIComponent(ns)}/entities/${encodeURIComponent(key)}`),
+      api(`/api/namespaces/${encodeURIComponent(ns)}/entities/${encodeURIComponent(key)}/events?last=20`),
+    ]);
+
+    let html = breadcrumb([
+      {label: 'Overview', hash: ''},
+      {label: ns, hash: `/ns/${encodeURIComponent(ns)}`},
+      {label: key},
+    ]);
+
+    html += `<h2 style="color:var(--text-0);margin-bottom:16px;font-size:18px;font-family:var(--mono)">${escHtml(key)}</h2>`;
+
+    // Metadata card
+    html += '<div class="card"><div class="card-header">Metadata</div><div class="card-body">';
+    html += '<div class="detail-grid">';
+    html += detailRow('Namespace', ns);
+    html += detailRow('Key', key);
+    html += detailRow('Size', fmtBytes(entity.size) + ' (' + fmtNum(entity.size) + ' bytes)');
+    html += detailRow('Version', entity.version != null ? 'v' + entity.version : '(unversioned)');
+    html += detailRow('CRDT Type', entity.crdt_type || '(raw)');
+    html += detailRow('Events', fmtNum(entity.event_count));
+    if (entity.snapshot) {
+      html += detailRow('Snapshot', 'at seq ' + fmtNum(entity.snapshot.at_sequence) + ', v' + entity.snapshot.version + ', ' + fmtBytes(entity.snapshot.size));
+    }
+    html += '</div></div></div>';
+
+    // Events card
+    const evRoute = `/ns/${encodeURIComponent(ns)}/${encodeURIComponent(key)}/events`;
+    html += '<div class="card"><div class="card-header">';
+    html += `Event Log (${events.showing} of ${fmtNum(events.total)})`;
+    if (events.total > 20) {
+      html += `<a style="margin-left:auto;color:var(--accent);cursor:pointer;font-size:12px;font-weight:400" onclick="go('${evRoute}')">View all</a>`;
+    }
+    html += '</div>';
+    if (events.events.length === 0) {
+      html += '<div class="empty"><div class="empty-text">No events</div></div>';
+    } else {
+      html += eventsTable(events.events);
+    }
+    html += '</div>';
+
+    content.innerHTML = html;
+  } catch (e) {
+    content.innerHTML = `<div class="empty"><div class="empty-text">Error: ${escHtml(e.message)}</div></div>`;
+  }
+}
+
+async function showEvents(ns, key) {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
+  try {
+    const events = await api(`/api/namespaces/${encodeURIComponent(ns)}/entities/${encodeURIComponent(key)}/events?last=500`);
+    let html = breadcrumb([
+      {label: 'Overview', hash: ''},
+      {label: ns, hash: `/ns/${encodeURIComponent(ns)}`},
+      {label: key, hash: `/ns/${encodeURIComponent(ns)}/${encodeURIComponent(key)}`},
+      {label: 'Events'},
+    ]);
+
+    html += `<h2 style="color:var(--text-0);margin-bottom:16px;font-size:18px">Events for <span style="font-family:var(--mono)">${escHtml(key)}</span></h2>`;
+
+    html += '<div class="card">';
+    html += `<div class="card-header">Event Log (${events.showing} of ${fmtNum(events.total)})</div>`;
+    if (events.events.length === 0) {
+      html += '<div class="empty"><div class="empty-text">No events</div></div>';
+    } else {
+      html += eventsTable(events.events);
+    }
+    html += '</div>';
+
+    content.innerHTML = html;
+  } catch (e) {
+    content.innerHTML = `<div class="empty"><div class="empty-text">Error: ${escHtml(e.message)}</div></div>`;
+  }
+}
+
+// ── Components ───────────────────────────────────────────────────────
+
+function statBox(value, label) {
+  return `<div class="stat-box"><div class="stat-value">${escHtml(String(value))}</div><div class="stat-label">${escHtml(label)}</div></div>`;
+}
+
+function detailRow(label, value) {
+  return `<div class="detail-label">${escHtml(label)}</div><div class="detail-value">${escHtml(String(value))}</div>`;
+}
+
+function breadcrumb(parts) {
+  let html = '<div class="breadcrumb">';
+  for (let i = 0; i < parts.length; i++) {
+    if (i > 0) html += '<span class="sep">/</span>';
+    const p = parts[i];
+    if (p.hash != null && i < parts.length - 1) {
+      html += `<a onclick="go('${p.hash}')">${escHtml(p.label)}</a>`;
+    } else {
+      html += `<span style="color:var(--text-0)">${escHtml(p.label)}</span>`;
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function eventsTable(events) {
+  let html = '<table><thead><tr>';
+  html += '<th class="r">Seq</th><th class="r">Timestamp</th><th>Node</th><th class="r">Size</th>';
+  html += '</tr></thead><tbody>';
+  for (const ev of events) {
+    html += '<tr>';
+    html += `<td class="r mono">${fmtNum(ev.sequence)}</td>`;
+    html += `<td class="r mono">${ev.timestamp}</td>`;
+    html += `<td class="mono">${escHtml(ev.node_id)}</td>`;
+    html += `<td class="r mono">${fmtBytes(ev.data_size)}</td>`;
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  return html;
+}
+
+function renderSidebar(namespaces) {
+  const el = document.getElementById('ns-list');
+  let html = '';
+  for (const ns of namespaces) {
+    const h = `/ns/${encodeURIComponent(ns.name)}`;
+    html += `<a class="sidebar-link" data-route="${h}" onclick="go('${h}')">`;
+    html += `${escHtml(ns.name)} <span class="count">${fmtNum(ns.entity_count)}</span></a>`;
+  }
+  if (namespaces.length === 0) {
+    html = '<div style="padding:6px 12px;font-size:12px;color:var(--text-2)">(empty)</div>';
+  }
+  el.innerHTML = html;
+}
+
+// ── Refresh ──────────────────────────────────────────────────────────
+async function refresh() {
+  route();
+}
+
+// ── Init ─────────────────────────────────────────────────────────────
+route();
+</script>
+</body>
+</html>

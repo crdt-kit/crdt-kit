@@ -5,6 +5,7 @@
 //! ```
 
 pub use crate::Crdt;
+pub use crate::CrdtType;
 pub use crate::DeltaCrdt;
 pub use crate::GCounter;
 pub use crate::GCounterDelta;
@@ -18,3 +19,4 @@ pub use crate::PNCounterDelta;
 pub use crate::Rga;
 pub use crate::TextCrdt;
 pub use crate::TwoPSet;
+pub use crate::Versioned;

@@ -1,0 +1,28 @@
+[package]
+name = "crdt-cli"
+version = "0.3.0"
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "CLI development tool for crdt-kit: inspect, migrate, compact, export, and generate code"
+readme = "../../README.md"
+keywords = ["crdt", "cli", "database", "migration", "tool"]
+categories = ["command-line-utilities", "database"]
+
+[[bin]]
+name = "crdt"
+path = "src/main.rs"
+
+[dependencies]
+crdt-kit = { path = "../crdt-kit", features = ["serde"] }
+crdt-store = { path = "../crdt-store", features = ["sqlite"] }
+crdt-migrate = { path = "../crdt-migrate" }
+crdt-dev-ui = { path = "../crdt-dev-ui" }
+crdt-codegen = { path = "../crdt-codegen" }
+clap = { version = "4", features = ["derive"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+serde_json = { workspace = true }
+serde = { workspace = true }

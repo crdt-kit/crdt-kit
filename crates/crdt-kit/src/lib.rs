@@ -71,9 +71,12 @@ mod pncounter;
 mod rga;
 mod text;
 mod twop_set;
+mod version;
 #[cfg(feature = "wasm")]
 mod wasm;
 
+pub mod clock;
+pub mod events;
 pub mod prelude;
 
 pub use crdt::{Crdt, DeltaCrdt};
@@ -86,3 +89,4 @@ pub use pncounter::{PNCounter, PNCounterDelta};
 pub use rga::Rga;
 pub use text::TextCrdt;
 pub use twop_set::TwoPSet;
+pub use version::{CrdtType, VersionError, Versioned};

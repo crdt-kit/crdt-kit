@@ -1,0 +1,21 @@
+[package]
+name = "crdt-dev-ui"
+version = "0.2.0"
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Embedded web panel for inspecting crdt-kit databases during development"
+readme = "../../README.md"
+keywords = ["crdt", "dev-tools", "inspector", "local-first"]
+categories = ["development-tools", "database"]
+
+[dependencies]
+crdt-store = { path = "../crdt-store", features = ["sqlite"] }
+crdt-migrate = { path = "../crdt-migrate", default-features = false }
+axum = "0.7"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net"] }
+serde = { workspace = true }
+serde_json = { workspace = true }

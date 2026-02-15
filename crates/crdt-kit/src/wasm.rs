@@ -139,6 +139,12 @@ pub struct WasmGSet {
     inner: crate::GSet<String>,
 }
 
+impl Default for WasmGSet {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[wasm_bindgen(js_class = GSet)]
 impl WasmGSet {
     /// Create a new empty G-Set.

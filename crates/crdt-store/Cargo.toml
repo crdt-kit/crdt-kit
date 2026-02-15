@@ -1,0 +1,32 @@
+[package]
+name = "crdt-store"
+version = "0.2.0"
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Persistence backends for crdt-kit: SQLite, redb, in-memory, and flash storage"
+readme = "../../README.md"
+keywords = ["crdt", "persistence", "sqlite", "embedded", "local-first"]
+categories = ["database", "data-structures"]
+
+[features]
+default = ["std"]
+std = []
+sqlite = ["std", "dep:rusqlite"]
+redb = ["std", "dep:redb"]
+
+[dependencies]
+crdt-kit = { path = "../crdt-kit", default-features = false, features = ["serde"] }
+crdt-migrate = { path = "../crdt-migrate", default-features = false }
+serde = { workspace = true }
+rusqlite = { version = "0.32", features = ["bundled"], optional = true }
+redb = { version = "2", optional = true }
+postcard = { version = "1", features = ["alloc"] }
+
+[dev-dependencies]
+crdt-migrate = { path = "../crdt-migrate", features = ["macros"] }
+serde_json.workspace = true
+tempfile = "3"

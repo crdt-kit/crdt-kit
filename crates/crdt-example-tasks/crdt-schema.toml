@@ -1,0 +1,52 @@
+# Schema definition for the Task + Project entities.
+#
+# To regenerate code: crdt generate --schema crdt-schema.toml
+#
+# This generates a complete persistence layer in `src/persistence/`
+# with models, migrations, repositories, events, and sync modules.
+
+[config]
+output = "src/persistence"
+
+[config.events]
+enabled = true
+snapshot_threshold = 100
+
+[config.sync]
+enabled = true
+
+# ── Project entity (CRDT fields) ─────────────────────────────────────
+
+[[entity]]
+name = "Project"
+table = "projects"
+
+[[entity.versions]]
+version = 1
+fields = [
+    { name = "name", type = "String", crdt = "LWWRegister" },
+    { name = "members", type = "String", crdt = "ORSet" },
+]
+
+# ── Task entity (plain fields, 2 versions, relation to Project) ──────
+
+[[entity]]
+name = "Task"
+table = "tasks"
+
+[[entity.versions]]
+version = 1
+fields = [
+    { name = "title", type = "String" },
+    { name = "done", type = "bool" },
+]
+
+[[entity.versions]]
+version = 2
+fields = [
+    { name = "title", type = "String" },
+    { name = "done", type = "bool" },
+    { name = "priority", type = "Option<u8>", default = "None" },
+    { name = "tags", type = "Vec<String>", default = "Vec::new()" },
+    { name = "project_id", type = "String", default = "String::new()", relation = "Project" },
+]

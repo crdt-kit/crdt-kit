@@ -1,0 +1,29 @@
+[package]
+name = "crdt-migrate"
+version = "0.2.0"
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Transparent schema migrations for crdt-kit: versioned serialization and automatic data migration"
+readme = "../../README.md"
+keywords = ["crdt", "migration", "schema", "versioning", "local-first"]
+categories = ["database", "data-structures"]
+
+[features]
+default = ["std", "macros"]
+std = []
+macros = ["dep:crdt-migrate-macros"]
+
+[dependencies]
+crdt-kit = { path = "../crdt-kit", default-features = false, features = ["serde"] }
+crdt-migrate-macros = { path = "../crdt-migrate-macros", optional = true }
+serde = { workspace = true }
+postcard = { version = "1", features = ["alloc"] }
+
+[dev-dependencies]
+crdt-store = { path = "../crdt-store" }
+postcard = { version = "1", features = ["alloc"] }
+serde_json.workspace = true

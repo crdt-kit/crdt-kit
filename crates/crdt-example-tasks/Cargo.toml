@@ -1,0 +1,25 @@
+[package]
+name = "crdt-example-tasks"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Example: task management with crdt-kit codegen, migrations, and event sourcing"
+readme = "../../README.md"
+keywords = ["crdt", "example", "local-first", "codegen"]
+categories = ["database"]
+publish = false
+
+[[bin]]
+name = "task-app"
+path = "src/main.rs"
+
+[dependencies]
+crdt-kit = { path = "../crdt-kit", features = ["serde"] }
+crdt-store = { path = "../crdt-store" }
+crdt-migrate = { path = "../crdt-migrate" }
+serde = { workspace = true }
+postcard = { version = "1", features = ["alloc"] }
