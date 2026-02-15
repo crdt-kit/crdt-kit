@@ -352,37 +352,66 @@ const codeMigration = [
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
       {[
         ['19M', 'ops/sec', 'GCounter increment',
-          lang === 'es' ? 'Incrementar un contador distribuido. Operación más común en IoT y analíticas.' : 'Incrementing a distributed counter. The most common operation in IoT and analytics.',
-          '53 μs / 1000 ops', 'teal'],
+          lang === 'es' ? 'Incrementar un contador distribuido. La operación más básica y frecuente.' : 'Incrementing a distributed counter. The most basic and frequent operation.',
+          '53 μs / 1000 ops', 'teal',
+          lang === 'es'
+            ? 'Se crea un GCounter con un nodo y se llama .increment() 1000 veces consecutivas. Se mide el tiempo total. Un GCounter es un mapa {nodo → cantidad}. Cada increment solo suma 1 a su propio slot — O(1), sin locks.'
+            : 'Creates a GCounter with one node and calls .increment() 1000 times consecutively. Measures total time. A GCounter is a map {node → count}. Each increment only adds 1 to its own slot — O(1), no locks.'],
         ['9M', 'merges/sec', 'GCounter merge',
-          lang === 'es' ? 'Fusionar 10 réplicas de un contador. Simula reconexión de 10 dispositivos.' : 'Merging 10 counter replicas. Simulates 10 devices reconnecting at once.',
-          '1.1 μs / 10 replicas', 'teal'],
+          lang === 'es' ? 'Fusionar 10 réplicas. Simula 10 dispositivos reconectando a la vez.' : 'Merging 10 replicas. Simulates 10 devices reconnecting at once.',
+          '1.1 μs / 10 replicas', 'teal',
+          lang === 'es'
+            ? 'Se crean 10 GCounters con diferentes nodos, cada uno incrementado varias veces. Se fusionan todos en uno. Merge toma el max() de cada slot — si nodo-A tiene {a:5, b:0} y nodo-B tiene {a:0, b:3}, el resultado es {a:5, b:3}. Tiempo lineal respecto al número de nodos.'
+            : 'Creates 10 GCounters with different nodes, each incremented multiple times. Merges them all into one. Merge takes max() of each slot — if node-A has {a:5, b:0} and node-B has {a:0, b:3}, result is {a:5, b:3}. Linear time in number of nodes.'],
         ['16M', 'ops/sec', 'PNCounter inc+dec',
-          lang === 'es' ? 'Contador que soporta incremento y decremento. Ideal para inventarios y likes.' : 'Counter supporting increment & decrement. Ideal for inventory tracking and likes.',
-          '60 μs / 1000 ops', 'orange'],
+          lang === 'es' ? 'Contador con incremento y decremento. Para inventarios y likes.' : 'Counter with increment & decrement. For inventory tracking and likes.',
+          '60 μs / 1000 ops', 'orange',
+          lang === 'es'
+            ? 'PNCounter = dos GCounters internos: uno para incrementos (P) y otro para decrementos (N). valor = P - N. Se hacen 500 incrementos y 500 decrementos intercalados. Cada operación es O(1) — solo modifica un slot del GCounter interno correspondiente.'
+            : 'PNCounter = two internal GCounters: one for increments (P) and one for decrements (N). value = P - N. Does 500 increments and 500 decrements interleaved. Each operation is O(1) — only modifies one slot in the corresponding internal GCounter.'],
         ['5M', 'ops/sec', 'ORSet insert',
-          lang === 'es' ? 'Insertar en un conjunto replicado. Para carritos de compra, listas colaborativas.' : 'Inserting into a replicated set. For shopping carts, collaborative lists.',
-          '187 μs / 1000 ops', 'orange'],
+          lang === 'es' ? 'Insertar en un conjunto replicado. Para carritos de compra, listas.' : 'Inserting into a replicated set. For shopping carts, lists.',
+          '187 μs / 1000 ops', 'orange',
+          lang === 'es'
+            ? 'Se crea un ORSet vacío y se insertan 1000 elementos distintos. Cada insert genera un tag único (nodo + reloj lógico) para rastrear el elemento. En merge, "add gana" sobre remove concurrente — si Alice agrega "leche" y Bob lo borra simultáneamente, "leche" queda.'
+            : 'Creates an empty ORSet and inserts 1000 distinct elements. Each insert generates a unique tag (node + logical clock) to track the element. On merge, "add wins" over concurrent remove — if Alice adds "milk" and Bob removes it simultaneously, "milk" stays.'],
         ['191 μs', 'merge 500+500', 'ORSet merge',
-          lang === 'es' ? 'Fusionar dos conjuntos de 500 elementos cada uno. Peor caso realista.' : 'Merging two sets of 500 elements each. Realistic worst-case scenario.',
-          '1000 elements total', 'purple'],
+          lang === 'es' ? 'Fusionar dos conjuntos de 500 elementos. Peor caso realista.' : 'Merging two sets of 500 elements. Realistic worst-case scenario.',
+          '1000 elements total', 'purple',
+          lang === 'es'
+            ? 'Dos ORSets, cada uno con 500 elementos (algunos compartidos, algunos únicos). El merge une los tags de ambos conjuntos. Un elemento solo se elimina si todas sus tags han sido removidas. El merge es proporcional al tamaño total de ambos conjuntos.'
+            : 'Two ORSets, each with 500 elements (some shared, some unique). Merge unions the tags of both sets. An element is only removed if all its tags have been deleted. Merge time is proportional to the total size of both sets.'],
         ['8M', 'merges/sec', 'LWWRegister merge',
-          lang === 'es' ? 'Last-Writer-Wins: el valor más reciente gana. Para perfiles, configuración, GPS.' : 'Last-Writer-Wins: most recent value wins. For user profiles, config, GPS coordinates.',
-          '11.5 μs / 100 replicas', 'purple'],
-      ].map(([val, unit, title, desc, detail, color]) => (
-        <div class="bg-bg-card border border-border rounded-xl p-5 hover:border-text-dim transition-all">
-          <div class="flex items-baseline gap-1.5 mb-2">
-            <span class:list={['text-2xl font-extrabold tracking-tight', color === 'teal' ? 'text-teal' : color === 'orange' ? 'text-orange' : 'text-purple']}>{val}</span>
-            <span class="text-text-dim text-xs font-mono">{unit}</span>
+          lang === 'es' ? 'Last-Writer-Wins: el valor más reciente gana. Para perfiles, config, GPS.' : 'Last-Writer-Wins: most recent value wins. For profiles, config, GPS.',
+          '11.5 μs / 100 replicas', 'purple',
+          lang === 'es'
+            ? 'LWWRegister guarda un valor + timestamp (Hybrid Logical Clock). Al merge, gana el timestamp más alto. Se crean 100 registros con diferentes valores y timestamps, se fusionan todos. El merge es una simple comparación de timestamps — O(1) por par.'
+            : 'LWWRegister stores a value + timestamp (Hybrid Logical Clock). On merge, highest timestamp wins. Creates 100 registers with different values and timestamps, merges them all. Merge is a simple timestamp comparison — O(1) per pair.'],
+      ].map(([val, unit, title, desc, detail, color, howItWorks]) => (
+        <details class="group bg-bg-card border border-border rounded-xl hover:border-text-dim transition-all">
+          <summary class="p-5 cursor-pointer list-none">
+            <div class="flex items-baseline gap-1.5 mb-2">
+              <span class:list={['text-2xl font-extrabold tracking-tight', color === 'teal' ? 'text-teal' : color === 'orange' ? 'text-orange' : 'text-purple']}>{val}</span>
+              <span class="text-text-dim text-xs font-mono">{unit}</span>
+            </div>
+            <h3 class="font-bold text-sm mb-1.5">{title}</h3>
+            <p class="text-text-dim text-xs leading-relaxed mb-2">{desc}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-text-dim text-[10px] font-mono">{detail}</span>
+              <span class="text-text-dim text-[10px] group-open:rotate-180 transition-transform">▼</span>
+            </div>
+          </summary>
+          <div class="px-5 pb-5 pt-0 border-t border-border mt-0">
+            <div class="pt-4">
+              <p class="text-[10px] text-teal font-bold uppercase tracking-wider mb-1.5">{lang === 'es' ? '¿Cómo funciona esta prueba?' : 'How does this benchmark work?'}</p>
+              <p class="text-text-dim text-xs leading-relaxed">{howItWorks}</p>
+            </div>
           </div>
-          <h3 class="font-bold text-sm mb-1.5">{title}</h3>
-          <p class="text-text-dim text-xs leading-relaxed mb-2">{desc}</p>
-          <span class="text-text-dim text-[10px] font-mono">{detail}</span>
-        </div>
+        </details>
       ))}
     </div>
 
-    <p class="text-center text-text-dim text-xs">{lang === 'es' ? 'Medido con Criterion en builds optimizados (release). μs = microsegundos (millonésimas de segundo).' : 'Measured with Criterion on optimized (release) builds. μs = microseconds (millionths of a second).'}</p>
+    <p class="text-center text-text-dim text-xs">{lang === 'es' ? 'Medido con Criterion en builds optimizados (release). μs = microsegundos (millonésimas de segundo). Haz clic en cada card para ver cómo funciona.' : 'Measured with Criterion on optimized (release) builds. μs = microseconds (millionths of a second). Click any card to see how it works.'}</p>
   </div>
 </section>
 
