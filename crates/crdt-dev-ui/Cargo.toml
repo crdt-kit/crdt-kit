@@ -13,8 +13,8 @@ keywords = ["crdt", "dev-tools", "inspector", "local-first"]
 categories = ["development-tools", "database"]
 
 [dependencies]
-crdt-store = { path = "../crdt-store", features = ["sqlite"] }
-crdt-migrate = { path = "../crdt-migrate", default-features = false }
+crdt-store = { version = "0.2.0", path = "../crdt-store", features = ["sqlite"] }
+crdt-migrate = { version = "0.2.0", path = "../crdt-migrate", default-features = false }
 axum = "0.7"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net"] }
 serde = { workspace = true }

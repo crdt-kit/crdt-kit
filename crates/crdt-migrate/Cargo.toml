@@ -18,12 +18,12 @@ std = []
 macros = ["dep:crdt-migrate-macros"]
 
 [dependencies]
-crdt-kit = { path = "../crdt-kit", default-features = false, features = ["serde"] }
-crdt-migrate-macros = { path = "../crdt-migrate-macros", optional = true }
+crdt-kit = { version = "0.3.0", path = "../crdt-kit", default-features = false, features = ["serde"] }
+crdt-migrate-macros = { version = "0.2.0", path = "../crdt-migrate-macros", optional = true }
 serde = { workspace = true }
 postcard = { version = "1", features = ["alloc"] }
 
 [dev-dependencies]
-crdt-store = { path = "../crdt-store" }
+crdt-store = { version = "0.2.0", path = "../crdt-store" }
 postcard = { version = "1", features = ["alloc"] }
 serde_json.workspace = true

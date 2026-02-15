@@ -18,8 +18,8 @@ name = "task-app"
 path = "src/main.rs"
 
 [dependencies]
-crdt-kit = { path = "../crdt-kit", features = ["serde"] }
-crdt-store = { path = "../crdt-store" }
-crdt-migrate = { path = "../crdt-migrate" }
+crdt-kit = { version = "0.3.0", path = "../crdt-kit", features = ["serde"] }
+crdt-store = { version = "0.2.0", path = "../crdt-store" }
+crdt-migrate = { version = "0.2.0", path = "../crdt-migrate" }
 serde = { workspace = true }
 postcard = { version = "1", features = ["alloc"] }

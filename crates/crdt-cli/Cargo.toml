@@ -17,11 +17,11 @@ name = "crdt"
 path = "src/main.rs"
 
 [dependencies]
-crdt-kit = { path = "../crdt-kit", features = ["serde"] }
-crdt-store = { path = "../crdt-store", features = ["sqlite"] }
-crdt-migrate = { path = "../crdt-migrate" }
-crdt-dev-ui = { path = "../crdt-dev-ui" }
-crdt-codegen = { path = "../crdt-codegen" }
+crdt-kit = { version = "0.3.0", path = "../crdt-kit", features = ["serde"] }
+crdt-store = { version = "0.2.0", path = "../crdt-store", features = ["sqlite"] }
+crdt-migrate = { version = "0.2.0", path = "../crdt-migrate" }
+crdt-dev-ui = { version = "0.2.0", path = "../crdt-dev-ui" }
+crdt-codegen = { version = "0.2.0", path = "../crdt-codegen" }
 clap = { version = "4", features = ["derive"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 serde_json = { workspace = true }
