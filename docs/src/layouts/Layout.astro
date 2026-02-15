@@ -1,0 +1,69 @@
+---
+import '../styles/global.css';
+import { t, getOtherLang, type Lang } from '../i18n/translations';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const other = getOtherLang(lang);
+const base = import.meta.env.BASE_URL;
+---
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>crdt-kit — {t(lang, 'hero.tagline')}</title>
+  <meta name="description" content={t(lang, 'hero.sub')} />
+  <meta property="og:title" content="crdt-kit — CRDTs for Rust" />
+  <meta property="og:image" content="https://raw.githubusercontent.com/crdt-kit/crdt-kit/master/assets/banner.png" />
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/crdt-kit/crdt-kit/master/assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="font-[Inter] leading-relaxed">
+  <!-- Nav -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-bg/90 backdrop-blur-xl border-b border-border">
+    <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+      <a href={`${base}/${lang}/`} class="flex items-center gap-2.5 font-bold text-text">
+        <img src="https://raw.githubusercontent.com/crdt-kit/crdt-kit/master/assets/logo.png" alt="crdt-kit" width="28" height="28" class="rounded-md" />
+        crdt-kit
+      </a>
+      <div class="flex items-center gap-5">
+        <a href={`#features`} class="hidden md:inline text-text-dim text-sm font-medium hover:text-text transition-colors">{t(lang, 'nav.features')}</a>
+        <a href={`#crdts`} class="hidden md:inline text-text-dim text-sm font-medium hover:text-text transition-colors">{t(lang, 'nav.types')}</a>
+        <a href={`#quickstart`} class="hidden md:inline text-text-dim text-sm font-medium hover:text-text transition-colors">{t(lang, 'nav.start')}</a>
+        <a href={`#ecosystem`} class="hidden md:inline text-text-dim text-sm font-medium hover:text-text transition-colors">{t(lang, 'nav.ecosystem')}</a>
+        <a href="https://docs.rs/crdt-kit" target="_blank" rel="noopener" class="hidden md:inline text-text-dim text-sm font-medium hover:text-text transition-colors">Docs</a>
+        <a href="https://github.com/crdt-kit/crdt-kit" target="_blank" rel="noopener" class="text-text-dim hover:text-text transition-colors" aria-label="GitHub">
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+        <a href={`${base}/${other}/`} class="border border-border rounded-md px-2.5 py-1 text-teal text-xs font-bold tracking-wider hover:border-teal transition-colors">
+          {other.toUpperCase()}
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-border py-8">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-text-dim text-sm font-semibold">
+        <img src="https://raw.githubusercontent.com/crdt-kit/crdt-kit/master/assets/logo.png" alt="" width="20" height="20" class="rounded" />
+        crdt-kit
+      </div>
+      <div class="flex gap-5 text-sm">
+        <a href="https://docs.rs/crdt-kit" target="_blank" class="text-text-dim hover:text-text transition-colors">Docs</a>
+        <a href="https://crates.io/crates/crdt-kit" target="_blank" class="text-text-dim hover:text-text transition-colors">Crates.io</a>
+        <a href="https://github.com/crdt-kit/crdt-kit" target="_blank" class="text-text-dim hover:text-text transition-colors">GitHub</a>
+        <a href="https://github.com/crdt-kit/crdt-kit/blob/master/CHANGELOG.md" target="_blank" class="text-text-dim hover:text-text transition-colors">Changelog</a>
+      </div>
+      <span class="text-text-dim text-xs">MIT / Apache 2.0</span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,402 @@
+---
+import { t, type Lang } from '../i18n/translations';
+import DeviceAnimation from './DeviceAnimation.astro';
+import CodeBlock from './CodeBlock.astro';
+import InteractiveDemo from './InteractiveDemo.tsx';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+---
+
+<!-- ===== HERO ===== -->
+<section class="relative pt-36 pb-20 text-center overflow-hidden">
+  <!-- Grid bg -->
+  <div class="absolute inset-0 pointer-events-none" style="background-image: linear-gradient(rgba(48,54,61,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(48,54,61,0.25) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 20%, transparent 70%);"></div>
+  <!-- Gradient glows -->
+  <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 600px 400px at 25% 15%, rgba(0,201,167,0.08), transparent 70%), radial-gradient(ellipse 500px 350px at 75% 25%, rgba(162,89,255,0.06), transparent 70%), radial-gradient(ellipse 400px 300px at 50% 85%, rgba(247,147,26,0.04), transparent 70%);"></div>
+
+  <div class="relative max-w-4xl mx-auto px-6">
+    <img src="https://raw.githubusercontent.com/crdt-kit/crdt-kit/master/assets/banner.png" alt="crdt-kit" class="mx-auto max-w-md w-full mb-5" />
+    <p class="text-text-dim text-lg mb-2">{t(lang, 'hero.tagline')}</p>
+    <p class="text-text-dim text-sm max-w-xl mx-auto mb-6 leading-relaxed">{t(lang, 'hero.sub')}</p>
+
+    <!-- Badges -->
+    <div class="flex justify-center gap-2 flex-wrap mb-7">
+      <img src="https://img.shields.io/crates/v/crdt-kit.svg?style=flat-square&logo=rust&color=e6522c" alt="crates.io" class="h-5" />
+      <img src="https://img.shields.io/crates/d/crdt-kit.svg?style=flat-square&color=e6522c" alt="downloads" class="h-5" />
+      <img src="https://img.shields.io/docsrs/crdt-kit?style=flat-square&logo=docs.rs&color=1a6fe6" alt="docs" class="h-5" />
+      <img src="https://img.shields.io/github/actions/workflow/status/crdt-kit/crdt-kit/ci.yml?branch=master&style=flat-square&logo=github&label=CI" alt="ci" class="h-5" />
+    </div>
+
+    <!-- CTAs -->
+    <div class="flex justify-center gap-3 flex-wrap mb-7">
+      <a href="#quickstart" class="bg-teal text-bg font-semibold px-5 py-2.5 rounded-lg hover:bg-teal/90 transition-colors text-sm">{t(lang, 'hero.getstarted')}</a>
+      <a href="https://docs.rs/crdt-kit" target="_blank" class="border border-purple/30 bg-purple/10 text-purple font-semibold px-5 py-2.5 rounded-lg hover:border-purple transition-colors text-sm">{t(lang, 'hero.apidocs')}</a>
+      <a href="https://github.com/crdt-kit/crdt-kit" target="_blank" class="border border-border text-text font-semibold px-5 py-2.5 rounded-lg hover:border-text-dim transition-colors text-sm">GitHub</a>
+    </div>
+
+    <!-- Install -->
+    <div class="inline-flex items-center gap-3 bg-bg-card border border-border rounded-lg px-5 py-2.5">
+      <code class="text-teal text-sm">cargo add crdt-kit</code>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DEVICE ANIMATION ===== -->
+<section class="py-10 px-6">
+  <DeviceAnimation />
+</section>
+
+<!-- ===== WHAT ===== -->
+<section class="py-20 px-6" id="what">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+    <div class="space-y-4">
+      <h2 class="text-3xl font-extrabold tracking-tight">{t(lang, 'what.title')}</h2>
+      <p class="text-text-dim leading-relaxed">{t(lang, 'what.p1')}</p>
+      <p class="text-text-dim leading-relaxed">{t(lang, 'what.p2')}</p>
+      <p class="text-text-dim leading-relaxed">{t(lang, 'what.p3')}</p>
+    </div>
+    <div class="bg-bg-card border border-border rounded-xl p-6 overflow-x-auto">
+      <pre class="text-xs text-text-dim leading-snug"><code>+-----------+   +-----------+   +-----------+
+|  Device A |   |  Device B |   |  Device C |
+|  (offline)|   |  (offline)|   |  (offline)|
++-----+-----+   +-----+-----+   +-----+-----+
+      |               |               |
+      +-------+-------+-------+-------+
+              |               |
+        +-----------+   +-----------+
+        |   merge   |   |   merge   |
+        +-----------+   +-----------+
+              |               |
+         <span class="text-teal font-bold">Same state!</span>      <span class="text-teal font-bold">Same state!</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY (Stats) ===== -->
+<section class="py-20 px-6 bg-bg-alt" id="why">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl font-extrabold tracking-tight mb-3">{t(lang, 'why.title')}</h2>
+    <p class="text-text-dim max-w-xl mx-auto mb-12">{t(lang, 'why.sub')}</p>
+    <div class="flex justify-center gap-10 md:gap-16 flex-wrap">
+      {[['~50KB', 'why.s1'], ['0', 'why.s2'], ['9', 'why.s3'], ['268', 'why.s4'], ['19M', 'why.s5']].map(([val, key]) => (
+        <div class="text-center">
+          <span class="block text-4xl font-extrabold text-teal tracking-tight">{val}</span>
+          <span class="text-xs text-text-dim mt-1 block">{t(lang, key as any)}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="py-20 px-6" id="features">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-12">{t(lang, 'feat.title')}</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        ['no_std', 'feat.nostd', 'teal', 'M20 2H8a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V8z'],
+        ['Delta Sync', 'feat.delta', 'orange', 'M13 2L3 14h9l-1 8 10-12h-9l1-8z'],
+        ['WASM', 'feat.wasm', 'purple', 'M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0022 16z'],
+        ['Migrations', 'feat.migrate', 'teal', 'M4 22h14a2 2 0 002-2V7.5L14.5 2H6a2 2 0 00-2 2v4'],
+        ['Storage', 'feat.storage', 'orange', 'M12 2C6.48 2 2 4.69 2 5s4.48 3 10 3 10-2.69 10-3-4.48-3-10-3'],
+        ['Codegen', 'feat.codegen', 'purple', 'M16 18l6-6-6-6M8 6l-6 6 6 6'],
+        ['Serde', 'feat.serde', 'teal', 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'],
+        ['Events', 'feat.events', 'orange', 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z'],
+        ['Dev Tools', 'feat.devtools', 'purple', 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z'],
+      ].map(([title, key, color, d]) => (
+        <div class="bg-bg-card border border-border rounded-xl p-5 hover:border-text-dim transition-all hover:-translate-y-0.5">
+          <div class={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${
+            color === 'teal' ? 'bg-teal/10 text-teal' : color === 'orange' ? 'bg-orange/10 text-orange' : 'bg-purple/10 text-purple'
+          }`}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d={d as string}/></svg>
+          </div>
+          <h3 class="font-bold text-sm mb-1.5">{title}</h3>
+          <p class="text-text-dim text-xs leading-relaxed">{t(lang, key as any)}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMPARISON ===== -->
+<section class="py-20 px-6 bg-bg-alt" id="comparison">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-12">{t(lang, 'compare.title')}</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-border">
+            <th class="text-left py-3 px-4 text-text-dim text-xs uppercase tracking-wider"></th>
+            <th class="text-left py-3 px-4 text-teal text-xs uppercase tracking-wider font-bold">crdt-kit</th>
+            <th class="text-left py-3 px-4 text-text-dim text-xs uppercase tracking-wider">Automerge</th>
+            <th class="text-left py-3 px-4 text-text-dim text-xs uppercase tracking-wider">Yjs / Yrs</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          {[
+            ['Language', 'Rust', 'Rust', 'JS / Rust'],
+            ['Zero deps (core)', '✓', '30+', 'N/A'],
+            ['no_std', '✓', '✗', '✗'],
+            ['WASM', '✓', 'Partial', 'Native'],
+            ['Storage', 'SQLite, redb, mem', 'Custom', 'N/A'],
+            ['Migrations', 'Automatic', 'Manual', 'N/A'],
+            ['Delta sync', '✓', '✓', '✓'],
+            ['Event sourcing', '✓', '✗', '✗'],
+            ['Code generation', '✓', '✗', '✗'],
+            ['CLI', '✓', '✗', '✗'],
+            ['Size', '~50KB', '~500KB+', '~150KB'],
+          ].map(([label, ck, am, yjs]) => (
+            <tr>
+              <td class="py-2.5 px-4 font-medium text-text">{label}</td>
+              <td class="py-2.5 px-4 text-teal font-semibold bg-teal/[0.03]">{ck}</td>
+              <td class={`py-2.5 px-4 ${am === '✓' ? 'text-teal' : 'text-text-dim'}`}>{am}</td>
+              <td class={`py-2.5 px-4 ${yjs === '✓' || yjs === 'Native' ? 'text-teal' : 'text-text-dim'}`}>{yjs}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CRDT TYPES ===== -->
+<section class="py-20 px-6" id="crdts">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-3">{t(lang, 'crdts.title')}</h2>
+    <p class="text-text-dim text-center max-w-xl mx-auto mb-12">{t(lang, 'crdts.sub')}</p>
+
+    {[
+      { cat: lang === 'es' ? 'Contadores' : 'Counters', items: [
+        { name: 'GCounter', badge: 'DeltaCrdt', bc: 'teal', desc: lang === 'es' ? 'Contador solo-crecimiento. Suma de todos los nodos.' : 'Grow-only counter. Sum of all nodes.', use: lang === 'es' ? 'Visitas, eventos IoT' : 'Page views, IoT events' },
+        { name: 'PNCounter', badge: 'DeltaCrdt', bc: 'teal', desc: lang === 'es' ? 'Incremento y decremento. Par interno de GCounters.' : 'Increment & decrement. Internal GCounter pair.', use: lang === 'es' ? 'Inventario, likes' : 'Inventory, likes/dislikes' },
+      ]},
+      { cat: lang === 'es' ? 'Registros' : 'Registers', items: [
+        { name: 'LWWRegister', badge: 'State', bc: 'dim', desc: lang === 'es' ? 'Last-Writer-Wins. Hybrid Logical Clock.' : 'Last-Writer-Wins. Hybrid Logical Clock.', use: lang === 'es' ? 'Perfiles, config, GPS' : 'Profiles, config, GPS' },
+        { name: 'MVRegister', badge: 'State', bc: 'dim', desc: lang === 'es' ? 'Multi-valor. Preserva escrituras concurrentes.' : 'Multi-value. Preserves concurrent writes.', use: lang === 'es' ? 'Auditoría, versiones' : 'Audit trails, versions' },
+      ]},
+      { cat: lang === 'es' ? 'Conjuntos' : 'Sets', items: [
+        { name: 'GSet', badge: 'State', bc: 'dim', desc: lang === 'es' ? 'Solo-crecimiento. Unión al merge.' : 'Grow-only. Union on merge.', use: lang === 'es' ? 'IDs vistos, tags' : 'Seen IDs, tags' },
+        { name: 'TwoPSet', badge: 'State', bc: 'dim', desc: lang === 'es' ? 'Add + remove permanente.' : 'Add + permanent remove.', use: lang === 'es' ? 'Blocklists, bans' : 'Blocklists, bans' },
+        { name: 'ORSet', badge: 'DeltaCrdt', bc: 'teal', desc: lang === 'es' ? 'Add y remove libre. Add gana en concurrencia.' : 'Add & remove freely. Add wins on concurrent.', use: lang === 'es' ? 'Carritos, miembros' : 'Carts, members' },
+      ]},
+      { cat: lang === 'es' ? 'Secuencias' : 'Sequences', items: [
+        { name: 'Rga', badge: 'State', bc: 'dim', desc: lang === 'es' ? 'Array replicado. Insert, remove, move.' : 'Replicated Growable Array. Insert, remove, move.', use: lang === 'es' ? 'Playlists, kanban' : 'Playlists, kanban' },
+        { name: 'TextCrdt', badge: 'State', bc: 'dim', desc: lang === 'es' ? 'Texto colaborativo. insert_str(), remove_range(), fork().' : 'Collaborative text. insert_str(), remove_range(), fork().', use: lang === 'es' ? 'Edición tipo Google Docs' : 'Google Docs-style editing' },
+      ]},
+    ].map(({ cat, items }) => (
+      <div class="mb-6">
+        <h3 class="text-xs uppercase tracking-widest text-text-dim mb-3">{cat}</h3>
+        <div class={`grid gap-3 ${items.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
+          {items.map(({ name, badge, bc, desc, use: useCase }) => (
+            <a href={`https://docs.rs/crdt-kit/latest/crdt_kit/struct.${name}.html`} target="_blank"
+              class="block bg-bg-card border border-border rounded-xl p-5 hover:border-teal transition-all group">
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="font-bold text-sm group-hover:text-teal transition-colors">{name}</h4>
+                <span class={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                  bc === 'teal' ? 'bg-teal/10 text-teal' : 'bg-text-dim/10 text-text-dim'
+                }`}>{badge}</span>
+              </div>
+              <p class="text-text-dim text-xs leading-relaxed mb-2">{desc}</p>
+              <p class="text-text-dim text-[10px] italic">{useCase}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<!-- ===== QUICK START ===== -->
+<section class="py-20 px-6 bg-bg-alt" id="quickstart">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-12">{t(lang, 'qs.title')}</h2>
+
+    <div class="grid md:grid-cols-2 gap-4 mb-8">
+      <CodeBlock title="Cargo.toml">
+        <span class="syn-k">[dependencies]</span>{'\n'}<span class="text-text">crdt-kit</span> = <span class="syn-s">"0.3"</span>
+      </CodeBlock>
+      <CodeBlock title="main.rs">
+        <span class="syn-k">use</span> crdt_kit::prelude::*;{'\n\n'}<span class="syn-c">// Two devices, working offline</span>{'\n'}<span class="syn-k">let mut</span> phone = GCounter::new(<span class="syn-s">"phone"</span>);{'\n'}phone.increment();{'\n'}phone.increment();{'\n\n'}<span class="syn-k">let mut</span> laptop = GCounter::new(<span class="syn-s">"laptop"</span>);{'\n'}laptop.increment();{'\n\n'}<span class="syn-c">// Reconnect — merge. Always converges.</span>{'\n'}phone.merge(&laptop);{'\n'}<span class="syn-k">assert_eq!</span>(phone.value(), <span class="syn-n">3</span>);
+      </CodeBlock>
+    </div>
+
+    <h3 class="text-lg font-bold text-center mb-4">Delta Sync</h3>
+    <CodeBlock title="delta_sync.rs">
+      <span class="syn-k">let mut</span> sensor = GCounter::new(<span class="syn-s">"sensor-a"</span>);{'\n'}sensor.increment_by(<span class="syn-n">142</span>);{'\n\n'}<span class="syn-k">let mut</span> gateway = GCounter::new(<span class="syn-s">"gateway"</span>);{'\n\n'}<span class="syn-c">// Delta: only send what the gateway doesn't have</span>{'\n'}<span class="syn-k">let</span> delta = sensor.delta(&gateway);{'\n'}gateway.apply_delta(&delta);{'\n'}<span class="syn-k">assert_eq!</span>(gateway.value(), <span class="syn-n">142</span>);
+    </CodeBlock>
+
+    <h3 class="text-lg font-bold text-center mt-10 mb-4">{t(lang, 'feat.migrate_title' as any) || 'Schema Migrations'}</h3>
+    <CodeBlock title="migration.rs">
+      <span class="syn-k">use</span> crdt_migrate::{'{'}crdt_schema, migration{'}'};{'\n\n'}<span class="syn-p">#[crdt_schema(version = 1, table = "sensors")]</span>{'\n'}<span class="syn-k">struct</span> SensorV1 {'{'} device_id: <span class="syn-t">String</span>, temperature: <span class="syn-t">f32</span> {'}'}{'\n\n'}<span class="syn-p">#[crdt_schema(version = 2, table = "sensors")]</span>{'\n'}<span class="syn-k">struct</span> SensorV2 {'{'} device_id: <span class="syn-t">String</span>, temperature: <span class="syn-t">f32</span>, humidity: Option&lt;<span class="syn-t">f32</span>&gt; {'}'}{'\n\n'}<span class="syn-p">#[migration(from = 1, to = 2)]</span>{'\n'}<span class="syn-k">fn</span> add_humidity(old: SensorV1) -&gt; SensorV2 {'{'}{'\n'}  SensorV2 {'{'} device_id: old.device_id, temperature: old.temperature, humidity: None {'}'}{'\n'}{'}'}{'\n'}<span class="syn-c">// v1 records auto-migrate to v2 on load</span>
+    </CodeBlock>
+  </div>
+</section>
+
+<!-- ===== ARCHITECTURE ===== -->
+<section class="py-20 px-6" id="architecture">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-3">{t(lang, 'arch.title')}</h2>
+    <p class="text-text-dim text-center max-w-xl mx-auto mb-12">{t(lang, 'arch.sub')}</p>
+    <div class="flex flex-col md:flex-row justify-center items-stretch gap-4 mb-10">
+      {[['1', 'arch.s1', 'arch.s1d'], ['2', 'arch.s2', 'arch.s2d'], ['3', 'arch.s3', 'arch.s3d']].map(([num, title, desc], i) => (
+        <>
+          <div class="bg-bg-card border border-border rounded-xl p-6 max-w-[260px] text-center flex-1">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-teal/10 text-teal font-extrabold text-sm mb-3">{num}</span>
+            <h4 class="font-bold mb-2">{t(lang, title as any)}</h4>
+            <p class="text-text-dim text-xs leading-relaxed">{t(lang, desc as any)}</p>
+          </div>
+          {i < 2 && <span class="hidden md:flex items-center text-text-dim text-2xl">→</span>}
+        </>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ===== USE CASES ===== -->
+<section class="py-20 px-6 bg-bg-alt" id="usecases">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-12">{t(lang, 'use.title')}</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        ['use.iot', 'use.iotd', 'teal'],
+        ['use.mobile', 'use.mobiled', 'orange'],
+        ['use.collab', 'use.collabd', 'purple'],
+        ['use.edge', 'use.edged', 'teal'],
+        ['use.p2p', 'use.p2pd', 'orange'],
+        ['use.wasmuc', 'use.wasmd', 'purple'],
+      ].map(([titleKey, descKey, color]) => (
+        <div class="bg-bg-card border border-border rounded-xl p-5 hover:border-text-dim transition-all hover:-translate-y-0.5">
+          <div class={`w-2 h-2 rounded-full mb-3 ${color === 'teal' ? 'bg-teal' : color === 'orange' ? 'bg-orange' : 'bg-purple'}`}></div>
+          <h3 class="font-bold text-sm mb-2">{t(lang, titleKey as any)}</h3>
+          <p class="text-text-dim text-xs leading-relaxed">{t(lang, descKey as any)}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ===== ECOSYSTEM ===== -->
+<section class="py-20 px-6" id="ecosystem">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-3">{t(lang, 'eco.title')}</h2>
+    <p class="text-text-dim text-center max-w-xl mx-auto mb-12">{t(lang, 'eco.sub')}</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        ['crdt-kit', '9 CRDTs + HLC + traits', 'std · serde · wasm'],
+        ['crdt-store', 'SQLite, redb, memory + CrdtDb', 'sqlite · redb'],
+        ['crdt-migrate', 'Version envelopes + migration engine', 'macros'],
+        ['crdt-codegen', 'TOML schema → persistence layer', '—'],
+        ['crdt-cli', 'generate, dev-ui, inspect, compact, export', '—'],
+        ['crdt-dev-ui', 'Embedded dark-themed web inspector', '—'],
+      ].map(([name, desc, flags]) => (
+        <a href={`https://crates.io/crates/${name}`} target="_blank"
+          class="block bg-bg-card border border-border rounded-xl p-5 hover:border-teal hover:-translate-y-0.5 transition-all text-text">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-mono font-bold text-sm">{name}</h3>
+            <img src={`https://img.shields.io/crates/v/${name}?style=flat-square&color=00C9A7`} alt="" class="h-4" />
+          </div>
+          <p class="text-text-dim text-xs leading-relaxed mb-2">{desc}</p>
+          <span class="text-text-dim text-[10px] italic">{flags}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ===== INTERACTIVE DEMO ===== -->
+<section class="py-20 px-6 bg-bg-alt" id="demo">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-3">{t(lang, 'demo.title')}</h2>
+    <p class="text-text-dim text-center max-w-xl mx-auto mb-10">{t(lang, 'demo.sub')}</p>
+    <InteractiveDemo client:visible />
+  </div>
+</section>
+
+<!-- ===== PERFORMANCE ===== -->
+<section class="py-20 px-6">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-3">{t(lang, 'perf.title')}</h2>
+    <p class="text-text-dim text-center max-w-xl mx-auto mb-10">{t(lang, 'perf.sub')}</p>
+    <div class="overflow-x-auto max-w-2xl mx-auto">
+      <table class="w-full text-sm">
+        <thead><tr class="border-b border-border">
+          <th class="text-left py-2 px-4 text-text-dim text-xs uppercase">Operation</th>
+          <th class="text-left py-2 px-4 text-text-dim text-xs uppercase">Time</th>
+          <th class="text-left py-2 px-4 text-text-dim text-xs uppercase">Throughput</th>
+        </tr></thead>
+        <tbody class="divide-y divide-border">
+          {[
+            ['GCounter increment ×1000', '53 µs', '~19M ops/sec'],
+            ['GCounter merge 10 replicas', '1.1 µs', '~9M merges/sec'],
+            ['PNCounter inc+dec ×1000', '60 µs', '~16M ops/sec'],
+            ['ORSet insert ×1000', '187 µs', '~5M ops/sec'],
+            ['ORSet merge 500+500', '191 µs', '—'],
+            ['LWWRegister merge 100 replicas', '11.5 µs', '~8M merges/sec'],
+          ].map(([op, time, tp]) => (
+            <tr>
+              <td class="py-2 px-4">{op}</td>
+              <td class="py-2 px-4 text-teal font-semibold">{time}</td>
+              <td class="py-2 px-4 text-text-dim">{tp}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GUARANTEES ===== -->
+<section class="py-20 px-6 bg-bg-alt">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-3">{t(lang, 'guar.title')}</h2>
+    <p class="text-text-dim text-center max-w-xl mx-auto mb-10">{t(lang, 'guar.sub')}</p>
+    <div class="grid sm:grid-cols-3 gap-4">
+      {[
+        ['a ⊕ b = b ⊕ a', 'guar.comm', 'guar.commd'],
+        ['(a ⊕ b) ⊕ c = a ⊕ (b ⊕ c)', 'guar.assoc', 'guar.assocd'],
+        ['a ⊕ a = a', 'guar.idem', 'guar.idemd'],
+      ].map(([sym, title, desc]) => (
+        <div class="bg-bg-card border border-border rounded-xl p-6 text-center">
+          <div class="font-mono text-teal text-lg mb-3">{sym}</div>
+          <h3 class="font-bold text-sm mb-1">{t(lang, title as any)}</h3>
+          <p class="text-text-dim text-xs">{t(lang, desc as any)}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLI ===== -->
+<section class="py-20 px-6">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-extrabold tracking-tight text-center mb-12">{t(lang, 'cli.title')}</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[
+        ['crdt status app.db', lang === 'es' ? 'Vista general de la base de datos.' : 'Database overview: namespaces, keys, size.'],
+        ['crdt inspect app.db sensor-42', lang === 'es' ? 'Detalle de entidad con event log.' : 'Entity detail with event log.'],
+        ['crdt compact app.db', lang === 'es' ? 'Snapshot + truncar event logs.' : 'Snapshot + truncate event logs.'],
+        ['crdt export app.db --namespace sensors', lang === 'es' ? 'Exportar JSON.' : 'JSON export.'],
+        ['crdt generate --schema schema.toml', lang === 'es' ? 'Generar capa de persistencia.' : 'Generate persistence layer.'],
+        ['crdt dev-ui app.db', lang === 'es' ? 'Panel web en localhost:4242.' : 'Web panel at localhost:4242.'],
+      ].map(([cmd, desc]) => (
+        <div class="bg-bg-card border border-border rounded-xl p-5">
+          <code class="block font-mono text-xs text-teal bg-bg border border-border rounded-md px-3 py-2 mb-3 overflow-x-auto">{cmd}</code>
+          <p class="text-text-dim text-xs">{desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="py-24 px-6 text-center" style="background: radial-gradient(ellipse 500px 300px at 50% 50%, rgba(0,201,167,0.06), transparent 70%);">
+  <h2 class="text-3xl font-extrabold tracking-tight mb-6">{t(lang, 'cta.title')}</h2>
+  <div class="inline-flex items-center gap-3 bg-bg-card border border-border rounded-lg px-6 py-3 mb-6">
+    <code class="text-teal text-base">cargo add crdt-kit --features serde</code>
+  </div>
+  <div class="flex justify-center gap-3 flex-wrap">
+    <a href="https://docs.rs/crdt-kit" target="_blank" class="bg-teal text-bg font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-teal/90 transition">{t(lang, 'hero.apidocs')}</a>
+    <a href="https://github.com/crdt-kit/crdt-kit" target="_blank" class="border border-border text-text font-semibold px-5 py-2.5 rounded-lg text-sm hover:border-text-dim transition">GitHub</a>
+  </div>
+</section>

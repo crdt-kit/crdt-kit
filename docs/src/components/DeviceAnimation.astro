@@ -1,0 +1,192 @@
+---
+/**
+ * Animated SVG showing three devices (phone, laptop, IoT sensor)
+ * working offline, then syncing and converging.
+ * Pure CSS animations, no JS required.
+ */
+---
+<div class="device-anim mx-auto max-w-2xl select-none" aria-hidden="true">
+  <svg viewBox="0 0 700 320" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+    <!-- Grid background -->
+    <defs>
+      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#30363D" stroke-width="0.5" opacity="0.4"/>
+      </pattern>
+      <linearGradient id="teal-grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#00C9A7" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#00C9A7" stop-opacity="0.2"/>
+      </linearGradient>
+      <linearGradient id="orange-grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#F7931A" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#F7931A" stop-opacity="0.2"/>
+      </linearGradient>
+      <linearGradient id="purple-grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#A259FF" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#A259FF" stop-opacity="0.2"/>
+      </linearGradient>
+      <filter id="glow-teal">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feFlood flood-color="#00C9A7" flood-opacity="0.3"/>
+        <feComposite in2="blur" operator="in"/>
+        <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow-orange">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feFlood flood-color="#F7931A" flood-opacity="0.3"/>
+        <feComposite in2="blur" operator="in"/>
+        <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow-purple">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feFlood flood-color="#A259FF" flood-opacity="0.3"/>
+        <feComposite in2="blur" operator="in"/>
+        <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="700" height="320" fill="url(#grid)" opacity="0.3"/>
+
+    <!-- Connection lines (animated dashes) -->
+    <g class="anim-lines">
+      <line x1="175" y1="130" x2="350" y2="250" stroke="#00C9A7" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4" class="anim-line-1"/>
+      <line x1="525" y1="130" x2="350" y2="250" stroke="#F7931A" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4" class="anim-line-2"/>
+      <line x1="175" y1="130" x2="525" y2="130" stroke="#A259FF" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4" class="anim-line-3"/>
+    </g>
+
+    <!-- Device: Phone (left) -->
+    <g class="anim-device-a" transform="translate(115, 40)">
+      <rect x="20" y="0" width="50" height="90" rx="8" fill="#1C2128" stroke="#00C9A7" stroke-width="2" filter="url(#glow-teal)"/>
+      <rect x="28" y="10" width="34" height="58" rx="2" fill="#0D1117"/>
+      <circle cx="45" cy="78" r="4" fill="none" stroke="#00C9A7" stroke-width="1.5"/>
+      <!-- Data dots -->
+      <circle cx="38" cy="28" r="3" fill="#00C9A7" opacity="0.8" class="anim-dot-1"/>
+      <circle cx="50" cy="38" r="3" fill="#00C9A7" opacity="0.5" class="anim-dot-2"/>
+      <circle cx="42" cy="50" r="3" fill="#00C9A7" opacity="0.6" class="anim-dot-3"/>
+      <!-- Label -->
+      <text x="45" y="108" text-anchor="middle" fill="#8B949E" font-size="11" font-family="Inter">Phone</text>
+    </g>
+
+    <!-- Device: Laptop (right) -->
+    <g class="anim-device-b" transform="translate(465, 40)">
+      <rect x="5" y="10" width="80" height="55" rx="4" fill="#1C2128" stroke="#F7931A" stroke-width="2" filter="url(#glow-orange)"/>
+      <rect x="13" y="18" width="64" height="38" rx="2" fill="#0D1117"/>
+      <path d="M0 70 L90 70 L85 78 L5 78 Z" fill="#1C2128" stroke="#F7931A" stroke-width="1.5"/>
+      <!-- Data dots -->
+      <circle cx="30" cy="32" r="3" fill="#F7931A" opacity="0.8" class="anim-dot-4"/>
+      <circle cx="50" cy="40" r="3" fill="#F7931A" opacity="0.5" class="anim-dot-5"/>
+      <circle cx="60" cy="30" r="3" fill="#F7931A" opacity="0.6" class="anim-dot-6"/>
+      <!-- Label -->
+      <text x="45" y="108" text-anchor="middle" fill="#8B949E" font-size="11" font-family="Inter">Laptop</text>
+    </g>
+
+    <!-- Device: IoT Sensor (bottom center) -->
+    <g class="anim-device-c" transform="translate(310, 200)">
+      <rect x="10" y="0" width="65" height="50" rx="6" fill="#1C2128" stroke="#A259FF" stroke-width="2" filter="url(#glow-purple)"/>
+      <circle cx="25" cy="20" r="4" fill="none" stroke="#A259FF" stroke-width="1.5"/>
+      <circle cx="25" cy="20" r="1.5" fill="#A259FF"/>
+      <rect x="40" y="12" width="25" height="3" rx="1.5" fill="#A259FF" opacity="0.6"/>
+      <rect x="40" y="20" width="20" height="3" rx="1.5" fill="#A259FF" opacity="0.4"/>
+      <rect x="40" y="28" width="22" height="3" rx="1.5" fill="#A259FF" opacity="0.5"/>
+      <!-- Antenna -->
+      <line x1="42" y1="0" x2="42" y2="-12" stroke="#A259FF" stroke-width="1.5"/>
+      <circle cx="42" cy="-15" r="3" fill="none" stroke="#A259FF" stroke-width="1"/>
+      <!-- Label -->
+      <text x="42" y="68" text-anchor="middle" fill="#8B949E" font-size="11" font-family="Inter">IoT Sensor</text>
+    </g>
+
+    <!-- Merge node (center) -->
+    <g class="anim-merge" transform="translate(335, 140)">
+      <circle cx="15" cy="15" r="18" fill="#1C2128" stroke="#00C9A7" stroke-width="2" class="anim-merge-circle"/>
+      <text x="15" y="19" text-anchor="middle" fill="#00C9A7" font-size="10" font-weight="bold" font-family="JetBrains Mono">merge</text>
+    </g>
+
+    <!-- Floating data packets -->
+    <g class="anim-packets">
+      <circle r="4" fill="#00C9A7" opacity="0.7" class="packet packet-1"/>
+      <circle r="4" fill="#F7931A" opacity="0.7" class="packet packet-2"/>
+      <circle r="3" fill="#A259FF" opacity="0.7" class="packet packet-3"/>
+    </g>
+
+    <!-- Status labels -->
+    <text x="160" y="175" text-anchor="middle" fill="#00C9A7" font-size="9" font-family="JetBrains Mono" opacity="0.8" class="anim-status-a">editing...</text>
+    <text x="540" y="175" text-anchor="middle" fill="#F7931A" font-size="9" font-family="JetBrains Mono" opacity="0.8" class="anim-status-b">editing...</text>
+    <text x="350" y="295" text-anchor="middle" fill="#A259FF" font-size="9" font-family="JetBrains Mono" opacity="0.8" class="anim-status-c">collecting...</text>
+  </svg>
+</div>
+
+<style>
+  .anim-device-a { animation: float-a 4s ease-in-out infinite; }
+  .anim-device-b { animation: float-b 4s ease-in-out infinite 0.5s; }
+  .anim-device-c { animation: float-c 4s ease-in-out infinite 1s; }
+
+  @keyframes float-a { 0%,100% { transform: translate(115px,40px); } 50% { transform: translate(115px,34px); } }
+  @keyframes float-b { 0%,100% { transform: translate(465px,40px); } 50% { transform: translate(465px,34px); } }
+  @keyframes float-c { 0%,100% { transform: translate(310px,200px); } 50% { transform: translate(310px,194px); } }
+
+  .anim-dot-1, .anim-dot-2, .anim-dot-3,
+  .anim-dot-4, .anim-dot-5, .anim-dot-6 {
+    animation: blink 2s ease-in-out infinite;
+  }
+  .anim-dot-2 { animation-delay: 0.3s; }
+  .anim-dot-3 { animation-delay: 0.6s; }
+  .anim-dot-4 { animation-delay: 0.1s; }
+  .anim-dot-5 { animation-delay: 0.4s; }
+  .anim-dot-6 { animation-delay: 0.7s; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  .anim-line-1, .anim-line-2, .anim-line-3 {
+    animation: dash-flow 1.5s linear infinite;
+  }
+  .anim-line-2 { animation-delay: 0.5s; }
+  .anim-line-3 { animation-delay: 1s; }
+
+  @keyframes dash-flow {
+    to { stroke-dashoffset: -24; }
+  }
+
+  .anim-merge-circle {
+    animation: merge-pulse 3s ease-in-out infinite;
+  }
+  @keyframes merge-pulse {
+    0%, 100% { stroke: #00C9A7; r: 18; }
+    33% { stroke: #F7931A; r: 20; }
+    66% { stroke: #A259FF; r: 19; }
+  }
+
+  .packet-1 {
+    animation: fly-1 3s ease-in-out infinite;
+  }
+  .packet-2 {
+    animation: fly-2 3s ease-in-out infinite 1s;
+  }
+  .packet-3 {
+    animation: fly-3 3s ease-in-out infinite 2s;
+  }
+
+  @keyframes fly-1 {
+    0% { cx: 175; cy: 130; opacity: 0.8; }
+    50% { cx: 260; cy: 185; opacity: 1; }
+    100% { cx: 350; cy: 155; opacity: 0; }
+  }
+  @keyframes fly-2 {
+    0% { cx: 525; cy: 130; opacity: 0.8; }
+    50% { cx: 435; cy: 185; opacity: 1; }
+    100% { cx: 350; cy: 155; opacity: 0; }
+  }
+  @keyframes fly-3 {
+    0% { cx: 350; cy: 250; opacity: 0.8; }
+    50% { cx: 350; cy: 200; opacity: 1; }
+    100% { cx: 350; cy: 155; opacity: 0; }
+  }
+
+  .anim-status-a { animation: status-blink 4s ease-in-out infinite; }
+  .anim-status-b { animation: status-blink 4s ease-in-out infinite 1.3s; }
+  .anim-status-c { animation: status-blink 4s ease-in-out infinite 2.6s; }
+  @keyframes status-blink {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+</style>

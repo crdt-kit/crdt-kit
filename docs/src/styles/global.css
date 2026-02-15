@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0D1117;
+  --color-bg-alt: #161B22;
+  --color-bg-card: #1C2128;
+  --color-border: #30363D;
+  --color-text: #E6EDF3;
+  --color-text-dim: #8B949E;
+  --color-teal: #00C9A7;
+  --color-orange: #F7931A;
+  --color-purple: #A259FF;
+  --color-green: #7EE787;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Code inline */
+:not(pre) > code {
+  font-family: var(--font-family-mono);
+  font-size: 0.85em;
+  background: var(--color-bg-card);
+  color: var(--color-teal);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Code blocks */
+pre {
+  font-family: var(--font-family-mono);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+/* Syntax */
+.syn-k { color: var(--color-purple); }
+.syn-s { color: var(--color-teal); }
+.syn-n { color: var(--color-orange); }
+.syn-c { color: var(--color-text-dim); }
+.syn-t { color: var(--color-orange); }
+.syn-p { color: var(--color-green); }
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 201, 167, 0); }
+  50% { box-shadow: 0 0 20px 4px rgba(0, 201, 167, 0.15); }
+}
+
+@keyframes dash-flow {
+  to { stroke-dashoffset: -20; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-dash { animation: dash-flow 1s linear infinite; }
+.animate-fade-in { animation: fade-in-up 0.6s ease-out both; }
