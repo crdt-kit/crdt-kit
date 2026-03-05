@@ -80,6 +80,39 @@ enum Commands {
         port: u16,
     },
 
+    /// Create a new crdt-kit project with interactive setup.
+    New {
+        /// Project name. If omitted, you will be prompted interactively.
+        name: Option<String>,
+    },
+
+    /// Launch development runtime: build & run your app + Dev UI dashboard.
+    Dev {
+        /// Path to the SQLite database file to monitor.
+        #[arg(short, long)]
+        db: Option<String>,
+
+        /// Port for the Dev UI dashboard.
+        #[arg(short, long, default_value = "4242")]
+        port: u16,
+
+        /// Cargo command to run your app (e.g. "run", "run --release").
+        #[arg(short, long, default_value = "run")]
+        cmd: String,
+
+        /// Watch for file changes and restart automatically.
+        #[arg(short, long)]
+        watch: bool,
+
+        /// Open Dev UI dashboard in browser automatically.
+        #[arg(long, default_value = "true")]
+        open: bool,
+
+        /// Path to crdt-schema.toml (auto-detected if not set).
+        #[arg(long)]
+        schema: Option<String>,
+    },
+
     /// Generate Rust code from a crdt-schema.toml definition.
     Generate {
         /// Path to the crdt-schema.toml file.
@@ -101,6 +134,15 @@ async fn main() {
     let cli = Cli::parse();
 
     let result: Result<(), Box<dyn std::error::Error>> = match cli.command {
+        Commands::New { name } => commands::new_project(name),
+        Commands::Dev {
+            db,
+            port,
+            cmd,
+            watch,
+            open,
+            schema,
+        } => commands::dev_server(db.as_deref(), port, &cmd, watch, open, schema.as_deref()).await,
         Commands::Status { db } => commands::status(&db),
         Commands::Inspect {
             db,

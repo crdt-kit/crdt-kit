@@ -137,7 +137,7 @@ crdt-kit/
 │   ├── crdt-migrate/          Version envelopes + migration engine
 │   ├── crdt-migrate-macros/   #[crdt_schema] + #[migration] proc macros
 │   ├── crdt-codegen/          Code generation from TOML schemas
-│   ├── crdt-cli/              CLI: status/inspect/compact/export/generate/dev-ui
+│   ├── crdt-cli/              CLI: new/dev/status/inspect/compact/export/generate/dev-ui
 │   ├── crdt-dev-ui/           Embedded web panel for database inspection
 │   └── crdt-example-tasks/    Full example: codegen + migrations + events
 ```
@@ -294,13 +294,73 @@ See [`crdt-example-tasks`](./crates/crdt-example-tasks) for a complete working e
 ### CLI
 
 ```bash
+# Project scaffolding
+$ crdt new                    # Interactive project creation (platform, template, entity)
+$ crdt new my-app             # Quick create with name
+
+# Development runtime
+$ crdt dev                    # Build & run app + Dev UI dashboard
+$ crdt dev --watch            # Auto-restart on file changes
+$ crdt dev --port 8080        # Custom Dev UI port
+
+# Database operations
 $ crdt status app.db          # Database overview
 $ crdt inspect app.db sensor-42 --events  # Entity detail + event log
 $ crdt compact app.db --threshold 100     # Snapshot + truncate events
 $ crdt export app.db --namespace sensors  # JSON export
+
+# Code generation
 $ crdt generate --schema crdt-schema.toml # Generate code from TOML
 $ crdt dev-ui app.db          # Launch web inspector
 ```
+
+### `crdt new` — Interactive Project Scaffolding
+
+Create a new crdt-kit project with a polished interactive experience (inspired by `dx new` and `cargo tauri init`):
+
+```
+$ crdt new
+
+◇ crdt-kit — Create a new project
+
+◆ Project name?  my-app
+◆ Platform?      CLI App / Dioxus Client / IoT Device / Edge Computing
+◆ Template?      Minimal / Full / Empty
+◆ Entity name?   Task
+◆ Event sourcing? Yes/No
+◆ Delta sync?     Yes/No
+
+◇ Creating project...
+  ✓ Created my-app/Cargo.toml
+  ✓ Created my-app/crdt-schema.toml
+  ✓ Generated persistence layer
+  ✓ Created my-app/src/main.rs
+
+◇ Done! cd my-app && cargo run
+```
+
+### `crdt dev` — Development Runtime
+
+Launches your app and the Dev UI dashboard side-by-side with live log streaming:
+
+```bash
+$ crdt dev
+  ┌─────────────────────────────────────────┐
+  │  crdt dev — Development Runtime         │
+  ├─────────────────────────────────────────┤
+  │  Schema   crdt-schema.toml              │
+  │  Database my-app.db                     │
+  │  Dev UI   http://localhost:4242         │
+  │  Command  cargo run                     │
+  └─────────────────────────────────────────┘
+
+  [crdt] 10:30:01 Running codegen...
+  [app]  10:30:03 Compiling my-app v0.1.0
+  [ui]   10:30:01 Dev UI running on http://localhost:4242
+  [app]  10:30:05 my-app is running
+```
+
+The Dev UI stays alive after the app exits for database inspection — press Ctrl+C to stop.
 
 ### Dev UI
 
@@ -466,6 +526,8 @@ Verified by **256 tests** across the workspace.
 - [x] Developer CLI (`crdt status/inspect/compact/export/generate`)
 - [x] Dev UI web panel
 - [x] Code generation from TOML schemas (`crdt generate`)
+- [x] Interactive project scaffolding (`crdt new`) with platform & template selection
+- [x] Development runtime (`crdt dev`) with live logs, Dev UI dashboard, and auto-codegen
 - [ ] Network transport layer (TCP, WebSocket, QUIC)
 - [ ] Sync protocol (delta-based replication)
 - [ ] Benchmarks against Automerge / Yrs

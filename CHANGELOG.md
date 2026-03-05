@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-03-05
+
+### Added
+
+- **crdt-cli** (v0.4.0) `new` subcommand — Interactive project scaffolding with platform and template selection
+  - Polished interactive CLI experience inspired by Dioxus (`dx new`) and Tauri (`cargo tauri init`)
+  - 4 platform targets: CLI App, Dioxus Client, IoT Device, Edge Computing
+  - 3 project templates: Minimal (single entity), Full (events + sync), Empty (skeleton only)
+  - Configurable entity name, event sourcing, and delta sync toggles
+  - Auto-generates `Cargo.toml`, `crdt-schema.toml`, `src/main.rs`, platform-specific files, and `.gitignore`
+  - Runs `crdt-codegen` automatically to generate the persistence layer from the schema
+  - Colored output with step-by-step progress feedback
+- **crdt-cli** `dev` subcommand — Development runtime combining app execution with Dev UI dashboard
+  - Launches `cargo run` and Dev UI web panel in parallel
+  - Auto-detects `crdt-schema.toml` and database path from the schema
+  - Timestamped, color-coded log streaming (`[crdt]`, `[app]`, `[ui]` prefixes)
+  - Schema change detection between restarts (auto-runs codegen when schema changes)
+  - `--watch` mode for automatic restart on file changes
+  - `--open` flag to auto-open Dev UI in the default browser
+  - Dev UI remains running after app exits for database inspection (press Ctrl+C to stop)
+  - Database snapshot display on app exit
+- **crdt-cli** New dependencies: `inquire` (interactive prompts), `console` (colored output), `open` (browser launch), `chrono` (timestamps)
+
 ## [0.3.0] - 2026-02-14
 
 ### Added
@@ -79,7 +102,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive test suite
 - Benchmark suite comparing operations
 
-[Unreleased]: https://github.com/crdt-kit/crdt-kit/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/crdt-kit/crdt-kit/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/crdt-kit/crdt-kit/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/crdt-kit/crdt-kit/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/crdt-kit/crdt-kit/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/crdt-kit/crdt-kit/compare/v0.1.0...v0.2.0
