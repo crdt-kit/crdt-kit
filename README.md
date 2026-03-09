@@ -75,7 +75,7 @@ Traditional sync solutions break when devices go offline. CRDTs solve this at th
 
 ```toml
 [dependencies]
-crdt-kit = "0.3"
+crdt-kit = "0.4.0-beta.1"
 ```
 
 ```rust
@@ -98,7 +98,7 @@ assert_eq!(phone.value(), 3);
 
 ```toml
 [dependencies]
-crdt-kit = { version = "0.3", features = ["serde"] }
+crdt-kit = { version = "0.4.0-beta.1", features = ["serde"] }
 crdt-store = { version = "0.1", features = ["sqlite"] }
 ```
 
@@ -386,7 +386,7 @@ crdt-kit = { version = "0.3", default-features = false }
 
 # Edge node with JSON sync over MQTT/HTTP
 [dependencies]
-crdt-kit = { version = "0.3", features = ["serde"] }
+crdt-kit = { version = "0.4.0-beta.1", features = ["serde"] }
 serde_json = "1"
 ```
 

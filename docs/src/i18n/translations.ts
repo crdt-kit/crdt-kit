@@ -81,7 +81,10 @@ const en = {
   'demo.sub': 'Two devices, one chat. Send messages offline, then sync — CRDTs guarantee convergence.',
 
   'perf.title': 'Performance',
-  'perf.sub': 'Measured with Criterion on optimized builds.',
+  'perf.sub': 'Measured with Criterion on optimized builds. 37–700x faster than Automerge and Yrs.',
+  'perf.vs': 'vs Automerge & Yrs',
+  'perf.vssub': 'Comparative benchmarks with the two most popular CRDT libraries in the Rust ecosystem.',
+  'perf.faster': 'faster',
 
   'guar.title': 'Mathematical Guarantees',
   'guar.sub': 'All CRDTs satisfy Strong Eventual Consistency (SEC). Verified by 268 tests.',
@@ -177,7 +180,10 @@ const es: typeof en = {
   'demo.sub': 'Dos dispositivos, un chat. Envía mensajes offline, sincroniza — los CRDTs garantizan convergencia.',
 
   'perf.title': 'Rendimiento',
-  'perf.sub': 'Medido con Criterion en builds optimizados.',
+  'perf.sub': 'Medido con Criterion en builds optimizados. 37–700x más rápido que Automerge y Yrs.',
+  'perf.vs': 'vs Automerge y Yrs',
+  'perf.vssub': 'Benchmarks comparativos con las dos librerías CRDT más populares del ecosistema Rust.',
+  'perf.faster': 'más rápido',
 
   'guar.title': 'Garantías Matemáticas',
   'guar.sub': 'Todos los CRDTs satisfacen Strong Eventual Consistency (SEC). Verificado por 268 tests.',

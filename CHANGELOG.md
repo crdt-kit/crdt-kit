@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0-beta.1] - 2026-03-09
+
+### Changed
+
+- **BREAKING: Rga rewritten** with flat `Vec<RgaNode>` architecture — eliminates `rebuild_sequence()` bottleneck. Insert x1000 improved from 278ms to 265μs (**1040x faster**). `RgaNode` fields changed: now `id`, `value`, `deleted` (removed `parent`). `RgaDelta` fields changed to `new_elements`, `tombstoned_ids`, `version`.
+- **TextCrdt** now caches `visible_len` — `len()` is O(1) instead of O(n). Reduces overhead on every insert/remove call.
+- **Rga** now has `fork()` method for creating independent replicas (same as TextCrdt).
+- **Rga** now tracks version vectors for efficient delta sync.
+
+### Added
+
+- **Comparative benchmarks** (`benches/comparative.rs`) vs Automerge 0.7 and Yrs 0.25 — crdt-kit is 37–700x faster across all categories:
+  - Counter increment: **700x** faster than Automerge
+  - Text insert: **37x** faster than Yrs, **199x** faster than Automerge
+  - List insert: **62x** faster than Yrs, **130x** faster than Automerge
+  - Set insert: **136x** faster than Automerge
+- New dev-dependencies: `automerge = "0.7"`, `yrs = "0.25"` (bench only)
+- Property-based tests (`proptest`) for all 9 CRDT types — 32 tests covering commutativity, associativity, idempotency, and delta equivalence
+
 ## [0.4.0] - 2026-03-05
 
 ### Added
@@ -102,7 +121,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive test suite
 - Benchmark suite comparing operations
 
-[Unreleased]: https://github.com/crdt-kit/crdt-kit/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/crdt-kit/crdt-kit/compare/v0.4.0-beta.1...HEAD
+[0.4.0-beta.1]: https://github.com/crdt-kit/crdt-kit/compare/v0.4.0...v0.4.0-beta.1
 [0.4.0]: https://github.com/crdt-kit/crdt-kit/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/crdt-kit/crdt-kit/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/crdt-kit/crdt-kit/compare/v0.2.0...v0.2.1

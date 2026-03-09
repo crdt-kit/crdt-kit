@@ -18,7 +18,7 @@ name = "task-app"
 path = "src/main.rs"
 
 [dependencies]
-crdt-kit = { version = "0.3.0", path = "../crdt-kit", features = ["serde"] }
+crdt-kit = { version = "0.4.0-beta.1", path = "../crdt-kit", features = ["serde"] }
 crdt-store = { version = "0.2.0", path = "../crdt-store" }
 crdt-migrate = { version = "0.2.0", path = "../crdt-migrate" }
 serde = { workspace = true }
