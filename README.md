@@ -14,7 +14,7 @@
 
 <br>
 
-[**Documentation**](https://docs.rs/crdt-kit) &bull; [**Crate**](https://crates.io/crates/crdt-kit) &bull; [**Examples**](./crates/crdt-store/examples) &bull; [**Contributing**](CONTRIBUTING.md)
+[**Website**](https://crdt-kit.github.io/crdt-kit/) &bull; [**Documentation**](https://docs.rs/crdt-kit) &bull; [**Crate**](https://crates.io/crates/crdt-kit) &bull; [**Examples**](./crates/crdt-store/examples) &bull; [**Contributing**](CONTRIBUTING.md)
 
 <br>
 
