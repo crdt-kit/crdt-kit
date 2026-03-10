@@ -1,6 +1,6 @@
 # crdt-kit — Technical Evaluation Document
 
-**Version evaluated:** 0.5.0 (March 2026)
+**Version evaluated:** 0.5.1 (March 2026)
 **Evaluation date:** March 10, 2026
 **Evaluator scope:** Architecture, correctness, performance, production readiness
 
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-crdt-kit is a Rust crate providing 11 CRDT types optimized for edge computing and local-first applications. It supports `no_std + alloc`, serde serialization, WASM bindings, Hybrid Logical Clocks, delta-state sync, and versioned serialization — all in ~5,700 lines of code with zero required dependencies.
+crdt-kit is a Rust crate providing 11 CRDT types optimized for edge computing and local-first applications. It supports `no_std + alloc`, serde serialization, WASM bindings, Hybrid Logical Clocks, delta-state sync, versioned serialization, and a binary envelope format — all in ~5,900 lines of code with zero required dependencies.
 
 ### Verdict
 
@@ -83,6 +83,7 @@ pub trait Versioned: Sized {
 - `DeltaCrdt` correctly separates delta computation as an extension trait.
 - `Versioned` enables schema migration envelopes with 3-byte overhead.
 - All 11 types implement all 3 traits.
+- `VersionedEnvelope` provides a 3-byte binary header (`[0xCF][version][type][payload]`) for wire/storage serialization with `to_bytes()`, `from_bytes()`, `peek_version()`, and `is_versioned()`.
 
 ### 3.2 Type-by-Type
 
@@ -170,7 +171,7 @@ pub struct HybridTimestamp {
 
 | Category | Count | Details |
 |---|---|---|
-| Unit tests | 137 | Per-module: 10-25 tests each |
+| Unit tests | 146 | Per-module: 10-25 tests each |
 | Integration tests | 14 | 3-way convergence, cross-type, Send+Sync |
 | Property-based (proptest) | ~40 | Commutativity, associativity, idempotency, delta equivalence |
 | Fuzz targets | 6 | GCounter, ORSet, LWWMap, AWMap, Rga, TextCrdt |
@@ -256,7 +257,7 @@ Missing: TwoPSet, MVRegister, LWWMap, AWMap, Rga, and all delta operations.
 
 ---
 
-## 10. API Quick Reference (v0.5.0)
+## 10. API Quick Reference (v0.5.1)
 
 ```rust
 // Identity
@@ -314,10 +315,18 @@ TextCrdt::new(actor: NodeId)
 HybridClock::new(node_id: NodeId)  // accepts u64, truncates to u16
   .now() -> HybridTimestamp | .receive(&remote) -> HybridTimestamp
 HybridClock::with_time_source(node_id, fn() -> u64)  // no_std custom clock
+
+// Versioned Envelope (binary serialization)
+VersionedEnvelope::new(version: u8, crdt_type: CrdtType, payload: Vec<u8>)
+  .to_bytes() -> Vec<u8>                          // [0xCF][ver][type][payload]
+VersionedEnvelope::from_bytes(&[u8]) -> Result<Self, EnvelopeError>
+VersionedEnvelope::peek_version(&[u8]) -> Result<u8, EnvelopeError>
+VersionedEnvelope::is_versioned(&[u8]) -> bool
+CrdtType::from_byte(u8) -> Option<CrdtType>
 ```
 
 ---
 
 ## 11. Conclusion
 
-crdt-kit v0.5.0 delivers a complete, correct, and performant CRDT toolkit for Rust. The combination of 11 types, `no_std` support, delta-state sync, HLC integration, and versioned serialization is unique in the open-source ecosystem. Ready for crates.io publication.
+crdt-kit v0.5.1 delivers a complete, correct, and performant CRDT toolkit for Rust. The combination of 11 types, `no_std` support, delta-state sync, HLC integration, and versioned serialization is unique in the open-source ecosystem. Ready for crates.io publication.

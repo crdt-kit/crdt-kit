@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-03-10
+
+### Added
+
+- **`VersionedEnvelope`** — Binary envelope format for serialized CRDTs with 3-byte header (`[0xCF][version][crdt_type][payload]`)
+- `VersionedEnvelope::to_bytes()` / `from_bytes()` — Serialize and parse envelopes
+- `VersionedEnvelope::peek_version()` — Read version without full deserialization
+- `VersionedEnvelope::is_versioned()` — Detect if data has a versioned envelope
+- **`EnvelopeError`** — Typed errors: `TooShort`, `InvalidMagic`, `UnknownCrdtType`
+- `CrdtType::from_byte()` — Deserialize CRDT type from raw byte (all 11 types)
+- Constants: `MAGIC_BYTE` (0xCF), `ENVELOPE_HEADER_SIZE` (3)
+- `version` module is now public (`pub mod version`)
+- `VersionedEnvelope` re-exported in prelude
+- 9 new unit tests for envelope roundtrip, error handling, and type coverage
+- `#[cfg(feature = "std")] impl std::error::Error` for `EnvelopeError`
+
 ## [0.5.0] - 2026-03-10
 
 ### Added
@@ -154,7 +170,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive test suite
 - Benchmark suite comparing operations
 
-[Unreleased]: https://github.com/crdt-kit/crdt-kit/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/crdt-kit/crdt-kit/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/crdt-kit/crdt-kit/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/crdt-kit/crdt-kit/compare/v0.4.0-beta.1...v0.5.0
 [0.4.0-beta.1]: https://github.com/crdt-kit/crdt-kit/compare/v0.4.0...v0.4.0-beta.1
 [0.4.0]: https://github.com/crdt-kit/crdt-kit/compare/v0.3.0...v0.4.0

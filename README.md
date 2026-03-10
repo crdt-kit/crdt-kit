@@ -57,7 +57,7 @@ Traditional sync solutions break when devices go offline. CRDTs solve this at th
 
 ```toml
 [dependencies]
-crdt-kit = "0.5"
+crdt-kit = "0.5.1"
 ```
 
 ```rust
@@ -153,6 +153,7 @@ crdt-kit = { version = "0.5", default-features = false }
 | [`Crdt`](https://docs.rs/crdt-kit/latest/crdt_kit/trait.Crdt.html) | Core merge semantics (commutative, associative, idempotent) |
 | [`DeltaCrdt`](https://docs.rs/crdt-kit/latest/crdt_kit/trait.DeltaCrdt.html) | Efficient delta sync — send only what changed (all 11 types) |
 | [`Versioned`](https://docs.rs/crdt-kit/latest/crdt_kit/trait.Versioned.html) | Schema versioning for serialization envelopes (all 11 types) |
+| [`VersionedEnvelope`](https://docs.rs/crdt-kit/latest/crdt_kit/struct.VersionedEnvelope.html) | Binary envelope format: 3-byte header + payload for wire/storage |
 
 ---
 
