@@ -120,6 +120,39 @@ impl<K: Ord + Clone, V: Clone + Eq> AWMap<K, V> {
     pub fn actor(&self) -> NodeId {
         self.actor
     }
+
+    /// Returns the number of tombstones stored.
+    #[must_use]
+    pub fn tombstone_count(&self) -> usize {
+        self.tombstones.len()
+    }
+
+    /// Remove tombstones that are not referenced by any active entry's tag set.
+    ///
+    /// **Caution:** While this only removes "dangling" tombstones (tags not
+    /// in any live entry), it can cause tag resurrection in partitioned
+    /// networks with 3+ replicas where a stale remove arrives after
+    /// compaction. Only call when you have reasonable confidence that all
+    /// in-flight remove operations have been delivered.
+    pub fn compact_tombstones(&mut self) {
+        let active_tags: BTreeSet<(NodeId, u64)> = self
+            .entries
+            .values()
+            .flat_map(|(_, tags)| tags.iter().copied())
+            .collect();
+        self.tombstones.retain(|t| active_tags.contains(t));
+    }
+
+    /// Remove **all** tombstones unconditionally.
+    ///
+    /// # Safety (logical)
+    ///
+    /// Only call this after all replicas have fully converged. If called
+    /// while replicas are still divergent, a stale remove may fail to
+    /// propagate on the next merge.
+    pub fn compact_tombstones_all(&mut self) {
+        self.tombstones.clear();
+    }
 }
 
 impl<K: Ord + Clone, V: Clone + Eq> IntoIterator for AWMap<K, V> {

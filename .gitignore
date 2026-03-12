@@ -11,3 +11,9 @@ Cargo.lock
 nul
 /.claude
 docs/EVALUATION.md
+docs/CTO_AUDIT.md
+docs/RESEARCH.md
+
+# Proprietary components — do NOT push to public repo
+contrib/crdt-agent/
+contrib/crdt-store/

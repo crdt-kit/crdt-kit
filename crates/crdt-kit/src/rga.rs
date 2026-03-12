@@ -190,6 +190,50 @@ impl<T: Clone + Ord> Rga<T> {
         self.iter().cloned().collect()
     }
 
+    /// Returns the number of tombstoned (deleted) elements.
+    #[must_use]
+    pub fn tombstone_count(&self) -> usize {
+        self.elements.iter().filter(|n| n.deleted).count()
+    }
+
+    /// Returns the total number of elements (including tombstones).
+    #[must_use]
+    pub fn raw_len(&self) -> usize {
+        self.elements.len()
+    }
+
+    /// Remove all tombstoned elements from the internal storage.
+    ///
+    /// # UNSAFE — Read before using
+    ///
+    /// **This method can cause replica divergence.** The RGA insertion
+    /// algorithm (`find_insert_position`) depends on tombstoned elements
+    /// to determine correct causal ordering. Removing them changes raw
+    /// indices and can cause concurrent inserts to land at wrong positions.
+    ///
+    /// **Only safe when ALL of these conditions are met:**
+    /// 1. All replicas have fully converged (identical state)
+    /// 2. No in-flight insert/delete operations exist
+    /// 3. No replica will ever send operations referencing removed IDs
+    /// 4. All replicas compact simultaneously (or no further syncs occur)
+    ///
+    /// **Prefer not calling this at all.** If storage is critical, consider
+    /// archiving the RGA and starting a fresh replica instead.
+    ///
+    /// Returns the number of tombstones removed.
+    pub fn compact_tombstones(&mut self) -> usize {
+        let before = self.elements.len();
+        let mut kept = ChunkedVec::new();
+        for node in self.elements.iter() {
+            if !node.deleted {
+                kept.push(node.clone());
+            }
+        }
+        let removed = before - kept.len();
+        self.elements = kept;
+        removed
+    }
+
     // ---- internal helpers ----
 
     fn visible_to_raw(&self, visible: usize) -> usize {

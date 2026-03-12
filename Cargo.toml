@@ -3,6 +3,9 @@ resolver = "2"
 members = [
     "crates/crdt-kit",
 ]
+exclude = [
+    "contrib/crdt-agent",
+]
 
 [workspace.package]
 edition = "2021"

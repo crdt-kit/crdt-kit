@@ -143,6 +143,52 @@ impl<K: Ord + Clone, V: Clone> LWWMap<K, V> {
     }
 }
 
+    /// Returns the number of tombstoned (removed) entries.
+    #[must_use]
+    pub fn tombstone_count(&self) -> usize {
+        self.entries.values().filter(|e| !e.alive).count()
+    }
+
+    /// Remove all tombstoned entries unconditionally.
+    ///
+    /// # Safety (logical)
+    ///
+    /// Only call after all replicas have fully converged. If a stale
+    /// replica later sends a remove with a timestamp matching a purged
+    /// tombstone, the key could be incorrectly resurrected.
+    pub fn compact_tombstones_all(&mut self) {
+        self.entries.retain(|_, e| e.alive);
+    }
+
+    /// Remove tombstoned entries older than `max_age_ms + 2 * sync_latency_bound_ms`.
+    ///
+    /// **WARNING:** This method can violate LWW semantics if the latency bound
+    /// is wrong. Only use when you have a **hard guarantee** on maximum network
+    /// latency and clock skew across all replicas.
+    ///
+    /// The safety margin (`2 * sync_latency_bound_ms`) accounts for:
+    /// - One-way network delay for the remove to propagate
+    /// - One-way network delay for a stale put to arrive
+    ///
+    /// If you cannot bound sync latency, use `compact_tombstones_all()` only
+    /// after confirmed full convergence.
+    pub fn compact_tombstones_with_age(
+        &mut self,
+        now_physical: u64,
+        max_age_ms: u64,
+        sync_latency_bound_ms: u64,
+    ) {
+        let safe_cutoff = max_age_ms.saturating_add(2 * sync_latency_bound_ms);
+        self.entries.retain(|_, e| {
+            if e.alive {
+                return true;
+            }
+            // Keep tombstones within the safety window
+            now_physical.saturating_sub(e.timestamp.physical) < safe_cutoff
+        });
+    }
+}
+
 impl<K: Ord + Clone, V: Clone> Default for LWWMap<K, V> {
     fn default() -> Self {
         Self::new()
